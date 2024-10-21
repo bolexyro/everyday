@@ -121,7 +121,7 @@ class TapToOpenFab extends StatelessWidget {
           duration: const Duration(milliseconds: 250),
           child: FloatingActionButton(
             onPressed: toggle,
-            child: const Icon(Icons.create),
+            child: const Icon(Icons.add),
           ),
         ),
       ),
@@ -139,25 +139,11 @@ class TapToCloseFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 56,
-      height: 56,
-      child: Center(
-        child: Material(
-          shape: const CircleBorder(),
-          clipBehavior: Clip.antiAlias,
-          elevation: 4,
-          child: InkWell(
-            onTap: toggle,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Icon(
-                Icons.close,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
-        ),
+    return FloatingActionButton.small(
+      onPressed: toggle,
+      child: Icon(
+        Icons.close,
+        color: Theme.of(context).primaryColor,
       ),
     );
   }

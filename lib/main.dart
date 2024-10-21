@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/core/app_colors.dart';
 import 'package:myapp/screens/home_screen.dart';
 
 void main() {
@@ -11,13 +12,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Everyday',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.neonGreen),
         useMaterial3: true,
       ),
       home: const HomeScreen(),
     );
   }
 }
-
