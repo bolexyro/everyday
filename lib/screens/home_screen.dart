@@ -12,25 +12,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentPageIndex = 0;
-  final List<Category> _categories = [
-    Category(name: 'My days'),
-    Category(name: 'Gratitudes'),
-    Category(name: 'Blessings'),
-    Category(name: 'Shockers'),
-    Category(name: 'COC'),
-  ];
+  final List<Category> _categories = [];
 
-  bool _fabIsHidden = false;
+  bool _fabIsExtended = true;
 
-  void _addCategory(String categoryName) {
+  void _addCategory(Category category) {
     setState(() {
-      _categories.add(Category(name: categoryName));
+      _categories.add(category);
     });
   }
 
-  void _hideUnhideFab({required bool hide}) {
+  void _extendFab({required bool extend}) {
     setState(() {
-      _fabIsHidden = hide;
+      _fabIsExtended = extend;
     });
   }
 
@@ -44,22 +38,29 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0)
             .add(const EdgeInsets.only(top: 8)),
-        child: CategoriesGridView(
-          categories: _categories,
-          onScroll: _hideUnhideFab,
-        ),
-      ),
-      floatingActionButton: _fabIsHidden
-          ? null
-          : FloatingActionButton.extended(
-              onPressed: () => showAdaptiveDialog(
-                context: context,
-                builder: (context) =>
-                    CreateCategoryDialog(onCategoryCreated: _addCategory),
+        child: _categories.isEmpty
+            ? const Center(child: Text('No categories yet'))
+            : CategoriesGridView(
+                categories: _categories,
+                onScroll: _extendFab,
               ),
-              label: const Text('Create Cateogry'),
-              icon: const Icon(Icons.add),
-            ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => showAdaptiveDialog(
+          context: context,
+          builder: (context) =>
+              CreateCategoryDialog(onCategoryCreated: _addCategory),
+        ),
+        extendedIconLabelSpacing: _fabIsExtended ? 10 : 0,
+        extendedPadding:
+            _fabIsExtended ? null : const EdgeInsets.symmetric(horizontal: 16),
+        label: AnimatedSize(
+          alignment: Alignment.centerLeft,
+          duration: const Duration(milliseconds: 100),
+          child: _fabIsExtended ? const Text('Create Category') : Container(),
+        ),
+        icon: const Icon(Icons.add),
+      ),
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {

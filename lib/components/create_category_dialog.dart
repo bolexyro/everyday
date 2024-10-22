@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myapp/core/extensions.dart';
+import 'package:myapp/models/category.dart';
 
 class CreateCategoryDialog extends StatefulWidget {
   const CreateCategoryDialog({
@@ -9,7 +12,7 @@ class CreateCategoryDialog extends StatefulWidget {
     required this.onCategoryCreated,
   });
 
-  final void Function(String name) onCategoryCreated;
+  final void Function(Category) onCategoryCreated;
 
   @override
   State<CreateCategoryDialog> createState() => _CreateCategoryDialogState();
@@ -17,6 +20,8 @@ class CreateCategoryDialog extends StatefulWidget {
 
 class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
   late final TextEditingController _categoryNameController;
+  bool _thumbnailSelected = false;
+  late XFile _selectedThumbnail;
   final picker = ImagePicker();
 
   @override
@@ -50,34 +55,52 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
           const Gap(12),
           TextField(
             controller: _categoryNameController,
+            textCapitalization: TextCapitalization.words,
             autofocus: true,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-            ),
+            decoration: const InputDecoration(border: OutlineInputBorder()),
           ),
           const Gap(16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              const Text('Set Thumbnail'),
-              const Gap(8),
-              GestureDetector(
-                onTap: () async {
-                  final XFile? image =
-                      await picker.pickImage(source: ImageSource.camera);
-                  if (image == null) {
-                    return;
-                  }
-                },
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const ShapeDecoration(
-                      shape: CircleBorder(side: BorderSide())),
-                  child: const Icon(Icons.file_upload_outlined),
-                ),
-              ),
-            ],
+          GestureDetector(
+            onTap: () async {
+              final XFile? image =
+                  await picker.pickImage(source: ImageSource.camera);
+              if (image == null) {
+                return;
+              }
+              setState(() {
+                _thumbnailSelected = true;
+                _selectedThumbnail = image;
+              });
+            },
+            child: _thumbnailSelected
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: Image.file(File(_selectedThumbnail.path)),
+                      ),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const Text('Set Thumbnail'),
+                      const Gap(8),
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: ShapeDecoration(
+                          shape: CircleBorder(
+                            side: BorderSide(
+                                color: context.colorScheme.onSurface),
+                          ),
+                        ),
+                        child: const Icon(Icons.file_upload_outlined),
+                      ),
+                    ],
+                  ),
           )
         ],
       ),
@@ -90,7 +113,10 @@ class _CreateCategoryDialogState extends State<CreateCategoryDialog> {
         ),
         TextButton(
           onPressed: () {
-            context.navigator.pop();
+            widget.onCategoryCreated(Category(
+                name: _categoryNameController.text,
+                thumbnailPath: _selectedThumbnail.path));
+            Navigator.of(context).pop();
           },
           child: const Text('Create'),
         ),

@@ -10,17 +10,17 @@ class CategoriesGridView extends StatelessWidget {
     required this.onScroll,
   });
   final List<Category> categories;
-  final void Function({required bool hide}) onScroll;
+  final void Function({required bool extend}) onScroll;
 
   @override
   Widget build(BuildContext context) {
     return NotificationListener<ScrollNotification>(
       onNotification: (scrollNotification) {
         if (scrollNotification is UserScrollNotification) {
-          if (scrollNotification.direction == ScrollDirection.forward) {
-            onScroll(hide: false);
-          } else if (scrollNotification.direction == ScrollDirection.reverse) {
-            onScroll(hide: true);
+          if (scrollNotification.direction == ScrollDirection.forward || scrollNotification.direction == ScrollDirection.reverse) {
+            onScroll(extend: false);
+          } else if (scrollNotification.metrics.atEdge) {
+            onScroll(extend: true);
           }
         }
         return false;

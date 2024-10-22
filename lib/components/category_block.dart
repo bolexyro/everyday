@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:myapp/core/extensions.dart';
 import 'package:myapp/models/category.dart';
@@ -22,18 +24,26 @@ class CategoryBlock extends StatelessWidget {
         height: 100,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: Theme.of(context).colorScheme.surfaceContainer,
         ),
-        child: Container(
-          width: double.infinity,
-          height: 30,
-          color: context.colorScheme.onSurface,
-          child: Center(  
-            child: Text(
-              category.name,
-              style: TextStyle(color: context.colorScheme.surfaceContainer),
+        child: Column(
+          children: [
+            Expanded(
+                child: Image.file(
+              File(category.thumbnailPath),
+              fit: BoxFit.cover,
+            )),
+            Container(
+              width: double.infinity,
+              height: 30,
+              color: context.colorScheme.onSurface,
+              child: Center(
+                child: Text(
+                  category.name,
+                  style: TextStyle(color: context.colorScheme.surfaceContainer),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
