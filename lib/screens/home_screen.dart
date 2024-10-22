@@ -12,7 +12,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentPageIndex = 0;
-  final List<Category> _categories = [];
+  final List<Category> _categories = [Category(name: 'Everyday')];
 
   bool _fabIsExtended = true;
 

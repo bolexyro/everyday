@@ -24,14 +24,18 @@ class CategoryBlock extends StatelessWidget {
         height: 100,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
+          color: context.colorScheme.surfaceContainer,
         ),
         child: Column(
           children: [
             Expanded(
-                child: Image.file(
-              File(category.thumbnailPath),
-              fit: BoxFit.cover,
-            )),
+              child: category.thumbnailPath == null
+                  ? Container()
+                  : Image.file(
+                      File(category.thumbnailPath!),
+                      fit: BoxFit.cover,
+                    ),
+            ),
             Container(
               width: double.infinity,
               height: 30,

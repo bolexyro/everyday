@@ -1,8 +1,8 @@
 class Category {
   Category({
     required this.name,
-    required this.thumbnailPath,
+    this.thumbnailPath,
   });
   final String name;
-  final String thumbnailPath;
+  final String? thumbnailPath;
 }
