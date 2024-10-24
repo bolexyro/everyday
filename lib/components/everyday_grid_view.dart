@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myapp/components/today_block.dart';
-import 'package:myapp/models/today.dart';
+import 'package:myapp/providers/everyday_provider.dart';
 
-class AllTodayGridView extends StatelessWidget {
+class AllTodayGridView extends ConsumerWidget {
   const AllTodayGridView({
     super.key,
-    required this.everyday,
     required this.onScroll,
   });
-  final List<Today> everyday;
   final void Function({required bool extend}) onScroll;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final everyday = ref.watch(everydayProvider);
     return NotificationListener<ScrollNotification>(
       onNotification: (scrollNotification) {
         if (scrollNotification is UserScrollNotification) {

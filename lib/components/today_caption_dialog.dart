@@ -1,29 +1,25 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:myapp/core/extensions.dart';
-import 'package:myapp/models/today.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:myapp/providers/everyday_provider.dart';
 
-class TodayCaptionDialog extends StatefulWidget {
+class TodayCaptionDialog extends ConsumerStatefulWidget {
   const TodayCaptionDialog({
     super.key,
-    required this.onVideoCaptioned,
     required this.videoPath,
   });
 
-  final void Function(Today) onVideoCaptioned;
   final String videoPath;
 
   @override
-  State<TodayCaptionDialog> createState() => _TodayCaptionDialogState();
+  ConsumerState<TodayCaptionDialog> createState() => _TodayCaptionDialogState();
 }
 
-class _TodayCaptionDialogState extends State<TodayCaptionDialog> {
+class _TodayCaptionDialogState extends ConsumerState<TodayCaptionDialog> {
   late final TextEditingController _captionController;
-
   late final DateTime _timeOfCreation;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -73,30 +69,36 @@ class _TodayCaptionDialogState extends State<TodayCaptionDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () {
-            context.navigator.pop();
-          },
+          onPressed: _isSaving
+              ? null
+              : () {
+                  context.navigator.pop();
+                },
           child: const Text('Cancel'),
         ),
         TextButton(
-          onPressed: () async {
-            final uint8list = await VideoThumbnail.thumbnailData(
-              video: widget.videoPath,
-              imageFormat: ImageFormat.JPEG,
-              // maxWidth: ,
-              quality: 25,
-            );
-            widget.onVideoCaptioned(
-              Today(
-                caption: _captionController.text,
-                videoPath: File(widget.videoPath).path,
-                date: DateTime.now(),
-                thumbnail: uint8list!,
-              ),
-            );
-            Navigator.of(context).pop();
-          },
-          child: const Text('Create'),
+          onPressed: _isSaving
+              ? null
+              : () async {
+                  setState(() {
+                    _isSaving = true;
+                  });
+
+                  await ref.read(everydayProvider.notifier).addToday(
+                        widget.videoPath,
+                        _captionController.text,
+                      );
+
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                },
+          child: _isSaving
+              ? const SizedBox.square(
+                  dimension: 24,
+                  child: CircularProgressIndicator(),
+                )
+              : const Text('Create'),
         ),
       ],
     );

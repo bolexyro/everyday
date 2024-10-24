@@ -10,6 +10,7 @@ class TodayBlock extends StatelessWidget {
   });
 
   final Today today;
+  
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

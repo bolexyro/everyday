@@ -1,35 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myapp/components/everyday_grid_view.dart';
 import 'package:myapp/components/today_caption_dialog.dart';
-import 'package:myapp/models/today.dart';
+import 'package:myapp/providers/everyday_provider.dart';
 import 'package:myapp/screens/sharing_tab.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   final picker = ImagePicker();
 
   int _currentPageIndex = 0;
-  final List<Today> _everyday = [];
-
   bool _fabIsExtended = true;
-
-  void _addToday(Today today) {
-    setState(() {
-      _everyday.add(today);
-    });
-  }
 
   void _extendFab({required bool extend}) {
     setState(() {
       _fabIsExtended = extend;
     });
+  }
+
+  @override
+  void initState() {
+    ref.read(everydayProvider.notifier).getEveryday();
+    super.initState();
   }
 
   @override
@@ -44,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
             .add(const EdgeInsets.only(top: 8)),
         child: _currentPageIndex == 0
             ? AllTodayGridView(
-                everyday: _everyday,
                 onScroll: _extendFab,
               )
             : const SharingTab(),
@@ -58,15 +56,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (video == null) {
                   return;
                 }
-                if (mounted) {
+                if (context.mounted) {
                   showAdaptiveDialog(
-                    // ignore: use_build_context_synchronously
                     context: context,
                     builder: (context) {
-                      return TodayCaptionDialog(
-                        onVideoCaptioned: _addToday,
-                        videoPath: video.path,
-                      );
+                      return TodayCaptionDialog(videoPath: video.path);
                     },
                   );
                 }
