@@ -1,22 +1,20 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:myapp/core/extensions.dart';
-import 'package:myapp/models/category.dart';
-import 'package:myapp/screens/category_screen.dart';
+import 'package:myapp/models/today.dart';
+import 'package:myapp/screens/today_screen.dart';
 
-class CategoryBlock extends StatelessWidget {
-  const CategoryBlock({
+class TodayBlock extends StatelessWidget {
+  const TodayBlock({
     super.key,
-    required this.category,
+    required this.today,
   });
 
-  final Category category;
+  final Today today;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.navigator
-          .push(context.route(CategoryScreen(category: category))),
+      onTap: () =>
+          context.navigator.push(context.route(TodayScreen(today: today))),
       child: Container(
         clipBehavior: Clip.hardEdge,
         alignment: Alignment.bottomCenter,
@@ -29,20 +27,18 @@ class CategoryBlock extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              child: category.thumbnailPath == null
-                  ? Container()
-                  : Image.file(
-                      File(category.thumbnailPath!),
-                      fit: BoxFit.cover,
-                    ),
+              child: Image.memory(
+                today.thumbnail,
+                fit: BoxFit.fill,
+              ),
             ),
             Container(
               width: double.infinity,
               height: 30,
-              color: context.colorScheme.onSurface,
+              color: context.colorScheme.onSecondaryContainer,
               child: Center(
                 child: Text(
-                  category.name,
+                  today.date.formatDateWithShortDay,
                   style: TextStyle(color: context.colorScheme.surfaceContainer),
                 ),
               ),

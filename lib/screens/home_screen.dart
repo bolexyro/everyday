@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/components/categories_grid_view.dart';
-import 'package:myapp/components/create_category_dialog.dart';
-import 'package:myapp/models/category.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:myapp/components/everyday_grid_view.dart';
+import 'package:myapp/components/today_caption_dialog.dart';
+import 'package:myapp/models/today.dart';
+import 'package:myapp/screens/sharing_tab.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,14 +13,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final picker = ImagePicker();
+
   int _currentPageIndex = 0;
-  final List<Category> _categories = [Category(name: 'Everyday')];
+  final List<Today> _everyday = [];
 
   bool _fabIsExtended = true;
 
-  void _addCategory(Category category) {
+  void _addToday(Today today) {
     setState(() {
-      _categories.add(category);
+      _everyday.add(today);
     });
   }
 
@@ -38,29 +42,46 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0)
             .add(const EdgeInsets.only(top: 8)),
-        child: _categories.isEmpty
-            ? const Center(child: Text('No categories yet'))
-            : CategoriesGridView(
-                categories: _categories,
+        child: _currentPageIndex == 0
+            ? AllTodayGridView(
+                everyday: _everyday,
                 onScroll: _extendFab,
+              )
+            : const SharingTab(),
+      ),
+      floatingActionButton: _currentPageIndex == 1
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: () async {
+                final XFile? video =
+                    await picker.pickVideo(source: ImageSource.camera);
+                if (video == null) {
+                  return;
+                }
+                if (mounted) {
+                  showAdaptiveDialog(
+                    // ignore: use_build_context_synchronously
+                    context: context,
+                    builder: (context) {
+                      return TodayCaptionDialog(
+                        onVideoCaptioned: _addToday,
+                        videoPath: video.path,
+                      );
+                    },
+                  );
+                }
+              },
+              extendedIconLabelSpacing: _fabIsExtended ? 10 : 0,
+              extendedPadding: _fabIsExtended
+                  ? null
+                  : const EdgeInsets.symmetric(horizontal: 16),
+              label: AnimatedSize(
+                alignment: Alignment.centerLeft,
+                duration: const Duration(milliseconds: 100),
+                child: _fabIsExtended ? const Text('Today') : Container(),
               ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => showAdaptiveDialog(
-          context: context,
-          builder: (context) =>
-              CreateCategoryDialog(onCategoryCreated: _addCategory),
-        ),
-        extendedIconLabelSpacing: _fabIsExtended ? 10 : 0,
-        extendedPadding:
-            _fabIsExtended ? null : const EdgeInsets.symmetric(horizontal: 16),
-        label: AnimatedSize(
-          alignment: Alignment.centerLeft,
-          duration: const Duration(milliseconds: 100),
-          child: _fabIsExtended ? const Text('Create Category') : Container(),
-        ),
-        icon: const Icon(Icons.add),
-      ),
+              icon: const Icon(Icons.videocam),
+            ),
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {

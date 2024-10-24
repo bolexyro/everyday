@@ -3,28 +3,31 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:myapp/core/extensions.dart';
-import 'package:myapp/models/video.dart';
+import 'package:myapp/models/today.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
-class VideoCaptionDialog extends StatefulWidget {
-  const VideoCaptionDialog({
+class TodayCaptionDialog extends StatefulWidget {
+  const TodayCaptionDialog({
     super.key,
-    required this.onVideoCreated,
+    required this.onVideoCaptioned,
     required this.videoPath,
   });
 
-  final void Function(Video) onVideoCreated;
+  final void Function(Today) onVideoCaptioned;
   final String videoPath;
 
   @override
-  State<VideoCaptionDialog> createState() => _VideoCaptionDialogState();
+  State<TodayCaptionDialog> createState() => _TodayCaptionDialogState();
 }
 
-class _VideoCaptionDialogState extends State<VideoCaptionDialog> {
+class _TodayCaptionDialogState extends State<TodayCaptionDialog> {
   late final TextEditingController _captionController;
+
+  late final DateTime _timeOfCreation;
 
   @override
   void initState() {
+    _timeOfCreation = DateTime.now();
     _captionController = TextEditingController(text: 'Uncaptioned Video');
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -50,13 +53,20 @@ class _VideoCaptionDialogState extends State<VideoCaptionDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Enter caption'),
+          Text('Caption your day', style: context.textTheme.titleMedium),
           const Gap(12),
           TextField(
             controller: _captionController,
             textCapitalization: TextCapitalization.words,
             autofocus: true,
             decoration: const InputDecoration(border: OutlineInputBorder()),
+          ),
+          const Gap(8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(_timeOfCreation.formatDateWithShortDay),
+            ],
           ),
           const Gap(16),
         ],
@@ -73,14 +83,14 @@ class _VideoCaptionDialogState extends State<VideoCaptionDialog> {
             final uint8list = await VideoThumbnail.thumbnailData(
               video: widget.videoPath,
               imageFormat: ImageFormat.JPEG,
-              maxWidth: 128,
+              // maxWidth: ,
               quality: 25,
             );
-            widget.onVideoCreated(
-              Video(
-                title: _captionController.text,
-                path: File(widget.videoPath).path,
-                time: DateTime.now(),
+            widget.onVideoCaptioned(
+              Today(
+                caption: _captionController.text,
+                videoPath: File(widget.videoPath).path,
+                date: DateTime.now(),
                 thumbnail: uint8list!,
               ),
             );
