@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/core/extensions.dart';
-import 'package:myapp/models/today.dart';
-import 'package:myapp/screens/today_screen.dart';
+import 'package:myapp/everyday/domain/entities/today.dart';
+import 'package:myapp/everyday/presentation/screens/today_screen.dart';
 
 class TodayBlock extends StatelessWidget {
   const TodayBlock({
@@ -10,7 +10,7 @@ class TodayBlock extends StatelessWidget {
   });
 
   final Today today;
-  
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

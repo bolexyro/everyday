@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:myapp/components/today_block.dart';
-import 'package:myapp/providers/everyday_provider.dart';
+import 'package:myapp/everyday/presentation/components/today_block.dart';
+import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
 
 class AllTodayGridView extends ConsumerWidget {
   const AllTodayGridView({

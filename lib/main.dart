@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:myapp/core/app_colors.dart';
-import 'package:myapp/screens/home_screen.dart';
+import 'package:myapp/everyday/presentation/screens/home_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

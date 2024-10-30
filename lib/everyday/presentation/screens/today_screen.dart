@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:myapp/models/today.dart';
+import 'package:myapp/everyday/domain/entities/today.dart';
 
 class TodayScreen extends StatefulWidget {
   const TodayScreen({

@@ -1,14 +1,22 @@
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:myapp/db/db_helper.dart';
-import 'package:myapp/models/today.dart';
+import 'package:myapp/everyday/data/data_sources/everyday_local_data_source.dart';
+import 'package:myapp/everyday/data/repository/everyday_repository.dart';
+import 'package:myapp/everyday/domain/entities/today.dart';
+import 'package:myapp/everyday/domain/use_cases/add_today.dart';
+import 'package:myapp/everyday/domain/use_cases/read_everyday.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 class EverydayNotifier extends StateNotifier<List<Today>> {
-  EverydayNotifier() : super([]);
+  EverydayNotifier(
+    this.addTodayUseCase,
+    this.readEverydayUseCase,
+  ) : super([]);
+  final AddTodayUseCase addTodayUseCase;
+  final ReadEverydayUseCase readEverydayUseCase;
 
   Future<void> addToday(String videoPath, String caption) async {
     final uint8list = await VideoThumbnail.thumbnailData(
@@ -29,14 +37,18 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
       thumbnail: uint8list!,
     );
 
-    await DbHelper.instance.insertToday(today);
+    await addTodayUseCase.call(today);
     state = [...state, today];
   }
 
   Future<void> getEveryday() async {
-    state = await DbHelper.instance.readAllTodays();
+    state = await readEverydayUseCase.call();
   }
 }
 
-final everydayProvider = StateNotifierProvider<EverydayNotifier, List<Today>>(
-    (ref) => EverydayNotifier());
+final everydayProvider =
+    StateNotifierProvider<EverydayNotifier, List<Today>>((ref) =>
+        EverydayNotifier(
+            AddTodayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource())),
+            ReadEverydayUseCase(
+                EverydayRepositoryImpl(EverydayLocalDataSource()))));
