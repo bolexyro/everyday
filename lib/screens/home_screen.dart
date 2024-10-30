@@ -35,8 +35,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Everyday'),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.backup),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0)
@@ -76,24 +81,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               icon: const Icon(Icons.videocam),
             ),
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            _currentPageIndex = index;
-          });
-        },
-        selectedIndex: _currentPageIndex,
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.people),
-            label: 'Sharing',
-          ),
-        ],
-      ),
+      // bottomNavigationBar: NavigationBar(
+      //   onDestinationSelected: (int index) {
+      //     setState(() {
+      //       _currentPageIndex = index;
+      //     });
+      //   },
+      //   selectedIndex: _currentPageIndex,
+      //   destinations: const [
+      //     NavigationDestination(
+      //       icon: Icon(Icons.home),
+      //       label: 'Home',
+      //     ),
+      //     NavigationDestination(
+      //       icon: Icon(Icons.people),
+      //       label: 'Sharing',
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

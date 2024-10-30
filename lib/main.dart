@@ -20,15 +20,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false,  
       title: 'Everyday',
-      theme: ThemeData(
+      darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.neonGreen,
           brightness: Brightness.dark,
         ),
+      ),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.neonGreen,
+        ),
         useMaterial3: true,
       ),
+      themeMode: ThemeMode.dark,
       home: const HomeScreen(),
     );
   }
