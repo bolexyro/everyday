@@ -41,11 +41,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0)
-            .add(const EdgeInsets.only(top: 8)),
-        child: AllTodayGridView(onScroll: _extendFab),
-      ),
+      body: AllTodayGridView(onScroll: _extendFab),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           final XFile? video =
@@ -72,7 +68,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         icon: const Icon(Icons.videocam),
       ),
-      
     );
   }
 }

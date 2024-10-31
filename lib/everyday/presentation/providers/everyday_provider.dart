@@ -44,11 +44,16 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
   Future<void> getEveryday() async {
     state = await readEverydayUseCase.call();
   }
+
+  Future<void> deleteToday(Today today) async {
+    state = [];
+    await Future.delayed(const Duration(seconds: 2));
+    state = [today];
+  }
 }
 
-final everydayProvider =
-    StateNotifierProvider<EverydayNotifier, List<Today>>((ref) =>
-        EverydayNotifier(
-            AddTodayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource())),
-            ReadEverydayUseCase(
-                EverydayRepositoryImpl(EverydayLocalDataSource()))));
+final everydayProvider = StateNotifierProvider<EverydayNotifier, List<Today>>(
+    (ref) => EverydayNotifier(
+        AddTodayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource())),
+        ReadEverydayUseCase(
+            EverydayRepositoryImpl(EverydayLocalDataSource()))));

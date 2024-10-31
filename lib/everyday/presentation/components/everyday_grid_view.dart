@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myapp/everyday/presentation/components/delete_today_drag_target.dart';
 import 'package:myapp/everyday/presentation/components/today_block.dart';
 import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
 
-class AllTodayGridView extends ConsumerWidget {
+class AllTodayGridView extends ConsumerStatefulWidget {
   const AllTodayGridView({
     super.key,
     required this.onScroll,
@@ -12,30 +13,58 @@ class AllTodayGridView extends ConsumerWidget {
   final void Function({required bool extend}) onScroll;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AllTodayGridView> createState() => _AllTodayGridViewState();
+}
+
+class _AllTodayGridViewState extends ConsumerState<AllTodayGridView> {
+  bool _isDeleteShowing = false;
+
+  void _showHideDelete([bool show = true]) {
+    setState(() => _isDeleteShowing = show);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final everyday = ref.watch(everydayProvider);
-    return NotificationListener<ScrollNotification>(
-      onNotification: (scrollNotification) {
-        if (scrollNotification is UserScrollNotification) {
-          if (scrollNotification.direction == ScrollDirection.forward ||
-              scrollNotification.direction == ScrollDirection.reverse) {
-            onScroll(extend: false);
-          } else if (scrollNotification.metrics.atEdge) {
-            onScroll(extend: true);
-          }
-        }
-        return false;
-      },
-      child: everyday.isEmpty
-          ? const Center(child: Text('No todays yet'))
-          : GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              children: everyday
-                  .map((category) => TodayBlock(today: category))
-                  .toList(),
-            ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0)
+          .add(const EdgeInsets.only(top: 8)),
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          NotificationListener<ScrollNotification>(
+            onNotification: (scrollNotification) {
+              if (scrollNotification is UserScrollNotification) {
+                if (scrollNotification.direction == ScrollDirection.forward ||
+                    scrollNotification.direction == ScrollDirection.reverse) {
+                  widget.onScroll(extend: false);
+                } else if (scrollNotification.metrics.atEdge) {
+                  widget.onScroll(extend: true);
+                }
+              }
+              return false;
+            },
+            child: everyday.isEmpty
+                ? const Center(child: Text('No todays yet'))
+                : GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    children: everyday
+                        .map((category) => TodayBlock(
+                              today: category,
+                              onDragStartedOrEnded: _showHideDelete,
+                            ))
+                        .toList(),
+                  ),
+          ),
+          if (_isDeleteShowing)
+            const Padding(
+              padding: EdgeInsets.only(bottom: 12.0),
+              child: DeleteTodayDragTarget(),
+            )
+        ],
+      ),
     );
   }
 }
