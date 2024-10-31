@@ -68,13 +68,13 @@ class EverydayLocalDataSource {
   ''');
   }
 
-  Future<TodayModel> insertToday(TodayModel today) async {
+  Future<TodayModel> insert(TodayModel today) async {
     final db = await database;
     await db!.insert(todayTable, today.toJson());
     return today;
   }
 
-  Future<List<TodayModel>> readAllTodays() async {
+  Future<List<TodayModel>> readAll() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db!.query('today');
     // resulting maps are read only
@@ -82,5 +82,10 @@ class EverydayLocalDataSource {
     return List<TodayModel>.from(maps.map((map) {
       return TodayModel.fromJson(map);
     }));
+  }
+
+  Future<void> delete(String id) async{
+    final db = await database;
+    await db!.delete(todayTable, where: '$columnId = ?', whereArgs: [id]);
   }
 }

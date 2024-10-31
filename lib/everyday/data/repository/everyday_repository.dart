@@ -16,19 +16,18 @@ class EverydayRepositoryImpl implements EverydayRepository {
       date: today.date,
       thumbnail: today.thumbnail,
     );
-    final savedTodayModel = await localDataSource.insertToday(todayModel);
+    final savedTodayModel = await localDataSource.insert(todayModel);
     return Today.fromModel(savedTodayModel);
   }
 
   @override
-  Future<void> deleteToday(String id) {
-    // TODO: implement deleteToday
-    throw UnimplementedError();
+  Future<void> deleteToday(String id) async {
+    await localDataSource.delete(id);
   }
 
   @override
   Future<List<Today>> readEveryday() async {
-    final allSavedTodays = await localDataSource.readAllTodays();
+    final allSavedTodays = await localDataSource.readAll();
     return allSavedTodays
         .map((todayModel) => Today.fromModel(todayModel))
         .toList();

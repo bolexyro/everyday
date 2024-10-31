@@ -5,6 +5,7 @@ import 'package:myapp/everyday/data/data_sources/everyday_local_data_source.dart
 import 'package:myapp/everyday/data/repository/everyday_repository.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
 import 'package:myapp/everyday/domain/use_cases/add_today.dart';
+import 'package:myapp/everyday/domain/use_cases/delete_today.dart';
 import 'package:myapp/everyday/domain/use_cases/read_everyday.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -14,9 +15,11 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
   EverydayNotifier(
     this.addTodayUseCase,
     this.readEverydayUseCase,
+    this.deleteTodayUseCase,
   ) : super([]);
   final AddTodayUseCase addTodayUseCase;
   final ReadEverydayUseCase readEverydayUseCase;
+  final DeleteTodayUseCase deleteTodayUseCase;
 
   Future<void> addToday(String videoPath, String caption) async {
     final uint8list = await VideoThumbnail.thumbnailData(
@@ -46,9 +49,8 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
   }
 
   Future<void> deleteToday(Today today) async {
-    state = [];
-    await Future.delayed(const Duration(seconds: 2));
-    state = [today];
+    await deleteTodayUseCase.call(today.id);
+     state  = state.where((eachToday)=>eachToday!=today).toList();
   }
 }
 
@@ -56,4 +58,7 @@ final everydayProvider = StateNotifierProvider<EverydayNotifier, List<Today>>(
     (ref) => EverydayNotifier(
         AddTodayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource())),
         ReadEverydayUseCase(
-            EverydayRepositoryImpl(EverydayLocalDataSource()))));
+            EverydayRepositoryImpl(EverydayLocalDataSource())),
+        DeleteTodayUseCase(
+            EverydayRepositoryImpl(EverydayLocalDataSource())),
+            ));
