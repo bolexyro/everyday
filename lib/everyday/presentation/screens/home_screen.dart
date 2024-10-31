@@ -52,6 +52,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           if (context.mounted) {
             showAdaptiveDialog(
               context: context,
+              barrierDismissible: false,
               builder: (context) {
                 return TodayCaptionDialog(videoPath: video.path);
               },

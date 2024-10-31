@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myapp/core/app_colors.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
 import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
 
@@ -12,8 +13,11 @@ class DeleteTodayDragTarget extends ConsumerWidget {
       builder: (context, candidateToday, rejectedItems) {
         return Container(
           width: double.infinity,
-          height: 60,        
-          color: candidateToday.isNotEmpty ? Colors.red : null,
+          color: candidateToday.isNotEmpty ? AppColors.error : null,
+          // decoration: BoxDecoration(
+          //   borderRadius: BorderRadius.circular(12),
+          // ),
+          height: 60,
           child: const Icon(Icons.delete),
         );
       },
