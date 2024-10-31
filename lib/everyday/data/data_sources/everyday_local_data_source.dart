@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:myapp/everyday/data/models/today_model.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart' as path;
+import 'package:uuid/uuid.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class EverydayLocalDataSource {
   static const _databaseName = "TodayDatabase.db";
@@ -68,7 +73,25 @@ class EverydayLocalDataSource {
   ''');
   }
 
-  Future<TodayModel> insert(TodayModel today) async {
+  Future<TodayModel> insert(String videoPath, String caption) async {
+    final uint8list = await VideoThumbnail.thumbnailData(
+      video: videoPath,
+      imageFormat: ImageFormat.JPEG,
+      quality: 25,
+    );
+    final directory = await getApplicationDocumentsDirectory();
+    final savedFileId = const Uuid().v4();
+    final savedFile =
+        await File(videoPath).copy('${directory.path}/$savedFileId.mp4');
+
+    final today = TodayModel(
+      id: savedFileId,
+      caption: caption,
+      videoPath: savedFile.path,
+      date: DateTime.now(),
+      thumbnail: uint8list!,
+    );
+
     final db = await database;
     await db!.insert(todayTable, today.toJson());
     return today;
@@ -84,8 +107,9 @@ class EverydayLocalDataSource {
     }));
   }
 
-  Future<void> delete(String id) async{
+  Future<void> delete(String id, String videoPath) async {
     final db = await database;
+    await File(videoPath).delete();
     await db!.delete(todayTable, where: '$columnId = ?', whereArgs: [id]);
   }
 }

@@ -5,7 +5,7 @@ class AddTodayUseCase {
   const AddTodayUseCase(this.todayRepository);
   final EverydayRepository todayRepository;
 
-  Future<void> call(Today today) {
-    return todayRepository.addToday(today);
+  Future<Today> call(String videoPath, String caption) {
+    return todayRepository.addToday(videoPath, caption);
   }
 }

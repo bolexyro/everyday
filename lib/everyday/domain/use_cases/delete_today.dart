@@ -4,7 +4,7 @@ class DeleteTodayUseCase {
   const DeleteTodayUseCase(this.todayRepository);
   final EverydayRepository todayRepository;
 
-  Future<void> call(String id) {
-    return todayRepository.deleteToday(id);
+  Future<void> call(String id, String videoPath) {
+    return todayRepository.deleteToday(id, videoPath);
   }
 }
