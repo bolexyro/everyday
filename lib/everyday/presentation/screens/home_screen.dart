@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:myapp/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/everyday/presentation/components/everyday_grid_view.dart';
 import 'package:myapp/everyday/presentation/components/today_caption_dialog.dart';
 import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
@@ -36,8 +37,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: const Text('Everyday'),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.backup),
+            onPressed: ()=> ref.read(authProvider.notifier).logout(),
+            icon: const Icon(Icons.logout),
           ),
         ],
       ),

@@ -8,34 +8,33 @@ import 'package:myapp/everyday/domain/use_cases/read_everyday.dart';
 
 class EverydayNotifier extends StateNotifier<List<Today>> {
   EverydayNotifier(
-    this.addTodayUseCase,
-    this.readEverydayUseCase,
-    this.deleteTodayUseCase,
+    this._addTodayUseCase,
+    this._readEverydayUseCase,
+    this._deleteTodayUseCase,
   ) : super([]);
-  final AddTodayUseCase addTodayUseCase;
-  final ReadEverydayUseCase readEverydayUseCase;
-  final DeleteTodayUseCase deleteTodayUseCase;
+  final AddTodayUseCase _addTodayUseCase;
+  final ReadEverydayUseCase _readEverydayUseCase;
+  final DeleteTodayUseCase _deleteTodayUseCase;
 
   Future<void> addToday(String videoPath, String caption) async {
-   final today = await addTodayUseCase.call(videoPath, caption);
+    final today = await _addTodayUseCase.call(videoPath, caption);
     state = [...state, today];
   }
 
   Future<void> getEveryday() async {
-    state = await readEverydayUseCase.call();
+    state = await _readEverydayUseCase.call();
   }
 
   Future<void> deleteToday(Today today) async {
-    await deleteTodayUseCase.call(today.id, today.videoPath);
-     state  = state.where((eachToday)=>eachToday!=today).toList();
+    await _deleteTodayUseCase.call(today.id, today.videoPath);
+    state = state.where((eachToday) => eachToday != today).toList();
   }
 }
 
 final everydayProvider = StateNotifierProvider<EverydayNotifier, List<Today>>(
     (ref) => EverydayNotifier(
-        AddTodayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource())),
-        ReadEverydayUseCase(
-            EverydayRepositoryImpl(EverydayLocalDataSource())),
-        DeleteTodayUseCase(
-            EverydayRepositoryImpl(EverydayLocalDataSource())),
-            ));
+          AddTodayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource())),
+          ReadEverydayUseCase(
+              EverydayRepositoryImpl(EverydayLocalDataSource())),
+          DeleteTodayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource())),
+        ));
