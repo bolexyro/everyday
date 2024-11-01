@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myapp/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/everyday/presentation/components/everyday_grid_view.dart';
+import 'package:myapp/everyday/presentation/components/profile_dialog.dart';
 import 'package:myapp/everyday/presentation/components/today_caption_dialog.dart';
 import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
 
@@ -36,9 +37,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       appBar: AppBar(
         title: const Text('Everyday'),
         actions: [
-          IconButton(
-            onPressed: ()=> ref.read(authProvider.notifier).logout(),
-            icon: const Icon(Icons.logout),
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: GestureDetector(
+              onTap: () => showDialog(
+                context: context,
+                builder: (context) => const ProfileDialog(),
+              ),
+              child: CircleAvatar(
+                backgroundImage:
+                    NetworkImage(ref.read(authProvider).user!.photoUrl),
+              ),
+            ),
           ),
         ],
       ),

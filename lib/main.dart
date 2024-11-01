@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:myapp/core/app_colors.dart';
 import 'package:myapp/myapp.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -13,23 +12,9 @@ void main() async {
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVtdHlsYnJzenRkcGFlYXR4cGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzAzODQyOTgsImV4cCI6MjA0NTk2MDI5OH0.RCkG0YKtKW7OTaOJc0MNgFTjud99EriqsOuAHYiH0os',
   );
-  runApp(ProviderScope(
-    child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Everyday',
-        darkTheme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: AppColors.neonGreen,
-            brightness: Brightness.dark,
-          ),
-        ),
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: AppColors.neonGreen,
-          ),
-          useMaterial3: true,
-        ),
-        themeMode: ThemeMode.dark,
-        home: MyApp()),
-  ));
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }

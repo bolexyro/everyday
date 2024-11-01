@@ -19,4 +19,9 @@ class AppUser {
       : email = userModel.email,
         name = userModel.name,
         photoUrl = userModel.photoUrl;
+        
+  @override
+  String toString() {
+    return 'AppUser(email: $email, name: $name, photoUrl: $photoUrl)';
+  }
 }

@@ -35,8 +35,8 @@ class AuthRepositoryImpl implements AuthRepository {
             isAuthenticated: true,
             user: AppUser(
               email: user.email!,
-              name: user.appMetadata.toString(),
-              photoUrl: user.appMetadata.toString(),
+              name: 'Bolexyro Nations',
+              photoUrl: 'https://avatars.githubusercontent.com/u/113560716?v=4',
             ),
           ),
         );
@@ -59,8 +59,8 @@ class AuthRepositoryImpl implements AuthRepository {
     }
     return AppUser(
       email: user.email!,
-      name: user.appMetadata.toString(),
-      photoUrl: user.appMetadata.toString(),
+      name: 'Bolexyro Nations',
+      photoUrl: 'https://avatars.githubusercontent.com/u/113560716?v=4',
     );
   }
 
@@ -95,7 +95,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> logout() async {
-    await supabaseClient.auth.signOut();
     await googleSignIn.signOut();
+    await supabaseClient.auth.signOut();
   }
 }

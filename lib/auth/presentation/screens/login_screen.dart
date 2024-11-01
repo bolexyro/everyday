@@ -4,11 +4,17 @@ import 'package:gap/gap.dart';
 import 'package:myapp/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/core/extensions.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  bool _isAuthenticating = false;
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         alignment: Alignment.bottomCenter,
@@ -76,12 +82,25 @@ class LoginScreen extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton.icon(
-                      onPressed: () => ref.read(authProvider.notifier).login(),
-                      icon: Image.asset(
-                        'google_logo'.png,
-                        height: 24,
-                        width: 24,
-                      ),
+                      onPressed: _isAuthenticating
+                          ? null
+                          : () async {
+                              setState(() {
+                                _isAuthenticating = true;
+                              });
+                              await ref.read(authProvider.notifier).login();
+                              setState(() {
+                                _isAuthenticating = false;
+                              });
+                            },
+                      icon: _isAuthenticating
+                          ? const SizedBox.square(
+                              dimension: 24, child: CircularProgressIndicator())
+                          : Image.asset(
+                              'google_logo'.png,
+                              height: 24,
+                              width: 24,
+                            ),
                       label: const Text('Next'),
                     ),
                   ],
