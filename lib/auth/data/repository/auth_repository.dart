@@ -14,6 +14,12 @@ class AuthRepositoryImpl implements AuthRepository {
 
   final SupabaseClient supabaseClient;
   final _authStateController = StreamController<AppAuthState>();
+  final webClientId =
+      '260386231659-g4u93n6lfvvfch4uf3fja488lvno63b2.apps.googleusercontent.com';
+  late final googleSignIn = GoogleSignIn(
+    serverClientId: webClientId,
+  );
+
   @override
   Stream<AppAuthState> get authStateChanges => _authStateController.stream;
 
@@ -60,12 +66,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> login() async {
-    const webClientId =
-        '260386231659-g4u93n6lfvvfch4uf3fja488lvno63b2.apps.googleusercontent.com';
-    final googleSignIn = GoogleSignIn(
-      serverClientId: webClientId,
-    );
     final googleUser = await googleSignIn.signIn();
+
     if (googleUser == null) {
       return;
     }
@@ -94,5 +96,6 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> logout() async {
     await supabaseClient.auth.signOut();
+    await googleSignIn.signOut();
   }
 }

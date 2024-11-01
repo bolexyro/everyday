@@ -25,14 +25,16 @@ class LoginScreen extends ConsumerWidget {
                 end: Alignment.bottomRight,
               ),
             ),
-            child: Column(
-              children: [
-                const Gap(32),
-                Image.asset(
-                  'everyday_logo'.png,
-                  color: Colors.black,
-                ),
-              ],
+            child: SafeArea(
+              child: Column(
+                children: [
+                  const Gap(32),
+                  Image.asset(
+                    'everyday_logo'.png,
+                    color: Colors.black,
+                  ),
+                ],
+              ),
             ),
           ),
           Container(
@@ -40,15 +42,15 @@ class LoginScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
             decoration: BoxDecoration(
               borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(15)),
+                  const BorderRadius.vertical(top: Radius.circular(25)),
               color: Theme.of(context).scaffoldBackgroundColor,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 15,
-                  offset: const Offset(0, -5),
-                ),
-              ],
+              // boxShadow: [
+              //   BoxShadow(
+              //     color: Colors.black.withOpacity(0.2),
+              //     blurRadius: 15,
+              //     offset: const Offset(0, -5),
+              //   ),
+              // ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
