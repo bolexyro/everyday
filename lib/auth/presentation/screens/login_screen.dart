@@ -11,8 +11,26 @@ class LoginScreen extends ConsumerStatefulWidget {
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen>
+    with SingleTickerProviderStateMixin {
   bool _isAuthenticating = false;
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,10 +53,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               child: Column(
                 children: [
                   const Gap(32),
-                  Image.asset(
-                    'everyday_logo'.png,
-                    color: Colors.black,
-                  ),
+                  _isAuthenticating
+                      ? RotationTransition(
+                          turns: Tween<double>(begin: 0, end: 1).animate(_controller),
+                          child: Image.asset(
+                            'everyday_logo'.png,
+                            color: Colors.black,
+                            // : 100, // Adjust the size if needed
+                          ),
+                        )
+                      : Image.asset(
+                          'everyday_logo'.png,
+                          color: Colors.black,
+                        ),
                 ],
               ),
             ),
@@ -50,13 +77,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(25)),
               color: Theme.of(context).scaffoldBackgroundColor,
-              // boxShadow: [
-              //   BoxShadow(
-              //     color: Colors.black.withOpacity(0.2),
-              //     blurRadius: 15,
-              //     offset: const Offset(0, -5),
-              //   ),
-              // ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -74,7 +94,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: Text(
-                    'Continue to google',
+                    'Continue to Everyday',
                     style: context.textTheme.headlineSmall,
                   ),
                 ),
@@ -95,7 +115,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             },
                       icon: _isAuthenticating
                           ? const SizedBox.square(
-                              dimension: 24, child: CircularProgressIndicator())
+                              dimension: 24, child: SizedBox())
                           : Image.asset(
                               'google_logo'.png,
                               height: 24,
@@ -107,7 +127,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

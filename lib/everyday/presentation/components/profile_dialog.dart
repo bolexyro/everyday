@@ -102,7 +102,7 @@ class ProfileDialog extends ConsumerWidget {
                         title: 'Logout',
                         icon: Icons.logout,
                       ),
-                      const Gap(16),
+                      // const Gap(16),
                     ],
                   )
                 ],
