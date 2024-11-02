@@ -70,11 +70,7 @@ class _AllTodayGridViewState extends ConsumerState<AllTodayGridView> {
                               .toList(),
                         ),
                 ),
-                if (_isDeleteShowing)
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 12.0),
-                    child: DeleteTodayDragTarget(),
-                  )
+                if (_isDeleteShowing) const DeleteTodayDragTarget()
               ],
             );
           }),
