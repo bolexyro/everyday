@@ -105,7 +105,7 @@ class EverydayLocalDataSource {
     await batch.commit(noResult: true);
   }
 
-  Future<TodayModel> insert(String videoPath, String caption) async {
+  Future<TodayModel> insert(String videoPath, String caption, String currentUserEmail) async {
     final uint8list = await VideoThumbnail.thumbnailData(
       video: videoPath,
       imageFormat: ImageFormat.JPEG,
@@ -122,6 +122,7 @@ class EverydayLocalDataSource {
       videoPath: savedFile.path,
       date: DateTime.now(),
       thumbnail: uint8list!,
+      email: currentUserEmail,
     );
 
     final db = await database;
@@ -129,10 +130,10 @@ class EverydayLocalDataSource {
     return today;
   }
 
-  Future<List<TodayModel>> readAll() async {
+  Future<List<TodayModel>> readAll(String currentUserEmail) async {
     final db = await database;
 
-    final List<Map<String, dynamic>> maps = await db!.query(todayTable);
+    final List<Map<String, dynamic>> maps = await db!.query(todayTable, where: '$columnEmail = ?', whereArgs: [currentUserEmail]);
     // resulting maps are read only
     // so if you do maps.first[columnId]  = 2, it would throw an exception
     return List<TodayModel>.from(maps.map((map) {

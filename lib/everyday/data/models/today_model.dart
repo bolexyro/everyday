@@ -12,6 +12,7 @@ class TodayModel {
     required this.videoPath,
     required this.date,
     required this.thumbnail,
+    required this.email,
   });
 
   final String id;
@@ -20,6 +21,7 @@ class TodayModel {
   final DateTime date;
   @Uint8ListConverter()
   final Uint8List thumbnail;
+  final String email;
 
   factory TodayModel.fromJson(Map<String, dynamic> json) =>
       _$TodayModelFromJson(json);

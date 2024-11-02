@@ -21,8 +21,8 @@ import 'package:myapp/everyday/domain/entities/today.dart';
 // You don't need to know HOW they get the book, just that they can get it for you
 
 abstract class EverydayRepository {
-  Future<Today> addToday(String videoPath, String caption);
-  Future<List<Today>> readEveryday();
+  Future<Today> addToday(String videoPath, String caption, String currentUserEmail);
+  Future<List<Today>> readEveryday(String currentUserEmail);
   Future<void> uploadEveryday();
   Future<void> deleteToday(String id, String videoPath);
   Future<void> updateEmailForPreviousRows(String email);

@@ -39,8 +39,10 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
 
 final everydayProvider = StateNotifierProvider<EverydayNotifier, List<Today>>(
   (ref) => EverydayNotifier(
-    AddTodayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource())),
-    ReadEverydayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource())),
+    AddTodayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource()),
+        AuthRepositoryImpl(Supabase.instance.client)),
+    ReadEverydayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource()),
+        AuthRepositoryImpl(Supabase.instance.client)),
     DeleteTodayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource())),
     UpdateEmailsPreviousRowsUseCase(
         AuthRepositoryImpl(Supabase.instance.client),
