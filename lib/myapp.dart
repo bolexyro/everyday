@@ -20,6 +20,7 @@ class MyApp extends ConsumerWidget {
           seedColor: AppColors.neonGreen,
           brightness: Brightness.dark,
         ),
+        // te
       ),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

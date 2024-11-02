@@ -16,10 +16,11 @@ class TodayBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LongPressDraggable(
-      dragAnchorStrategy: pointerDragAnchorStrategy,
+      dragAnchorStrategy: (Draggable<Object> _, BuildContext __, Offset ___) =>
+          const Offset(40, 100),
       feedback: SizedBox(
-        height: 200,
         width: 80,
+        height: 200,
         child: Image.memory(today.thumbnail),
       ),
       data: today,

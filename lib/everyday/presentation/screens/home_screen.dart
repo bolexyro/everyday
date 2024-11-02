@@ -6,7 +6,6 @@ import 'package:myapp/everyday/presentation/components/everyday_grid_view.dart';
 import 'package:myapp/everyday/presentation/components/profile_dialog.dart';
 import 'package:myapp/everyday/presentation/components/today_caption_dialog.dart';
 import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

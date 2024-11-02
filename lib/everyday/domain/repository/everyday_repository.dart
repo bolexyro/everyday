@@ -25,6 +25,7 @@ abstract class EverydayRepository {
   Future<List<Today>> readEveryday();
   Future<void> uploadEveryday();
   Future<void> deleteToday(String id, String videoPath);
+  Future<void> updateEmailForPreviousRows(String email);
 }
 
 // NB ABOUT ABSTRACT CLASSES

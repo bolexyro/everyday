@@ -9,7 +9,7 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 
 class EverydayLocalDataSource {
   static const _databaseName = "TodayDatabase.db";
-  static const _databaseVersion = 1;
+  static const _databaseVersion = 3;
   static const todayTable = 'today';
 
   static const columnId = 'id';
@@ -17,6 +17,7 @@ class EverydayLocalDataSource {
   static const columnVideoPath = 'videoPath';
   static const columnThumbnail = 'thumbnail';
   static const columnDate = 'date';
+  static const columnEmail = 'email';
 
   static final EverydayLocalDataSource _instance =
       EverydayLocalDataSource._internal();
@@ -58,12 +59,18 @@ class EverydayLocalDataSource {
       case 1:
         await _databaseVersion1(db);
         break;
+      case 2:
+        await _databaseVersion2(db);
+        break;
+      case 3:
+        await _databaseVersion3(db);
+        break;
     }
   }
 
   static Future<void> _databaseVersion1(sql.Database db) async {
     await db.execute('''
-    CREATE TABLE today (
+    CREATE TABLE $todayTable (
       $columnId TEXT PRIMARY KEY,
       $columnCaption TEXT NOT NULL,
       $columnVideoPath TEXT NOT NULL,
@@ -71,6 +78,34 @@ class EverydayLocalDataSource {
       $columnThumbnail BLOB NOT NULL
     )
   ''');
+  }
+
+  static Future<void> _databaseVersion2(sql.Database db) async {
+    await db.execute(
+        'ALTER TABLE $todayTable ADD COLUMN $columnEmail TEXT NOT NULL DEFAULT ""');
+  }
+
+  static Future<void> _databaseVersion3(sql.Database db) async {
+    const newTableName = 'today_new';
+    await db.execute('''
+    CREATE TABLE $newTableName (
+      $columnId TEXT PRIMARY KEY,
+      $columnCaption TEXT NOT NULL,
+      $columnVideoPath TEXT NOT NULL,
+      $columnDate TEXT NOT NULL,
+      $columnThumbnail BLOB NOT NULL,
+      $columnEmail TEXT NOT NULL
+    )
+  ''');
+    await db.execute(
+        "INSERT INTO $newTableName ($columnId, $columnCaption, $columnVideoPath, $columnDate, $columnThumbnail, $columnEmail) SELECT $columnId, $columnCaption, $columnVideoPath, $columnDate, $columnThumbnail, $columnEmail FROM $todayTable");
+    print('Inserted data into new table from old table'); // Log data insertion
+
+    await db.execute("DROP TABLE $todayTable");
+    print('Dropped old table: $todayTable'); // Log table drop
+
+    await db.execute("ALTER TABLE $newTableName RENAME TO $todayTable");
+    print('Renamed new table to: $todayTable'); // Log table rename
   }
 
   Future<TodayModel> insert(String videoPath, String caption) async {
@@ -99,9 +134,11 @@ class EverydayLocalDataSource {
 
   Future<List<TodayModel>> readAll() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query('today');
+
+    final List<Map<String, dynamic>> maps = await db!.query(todayTable);
     // resulting maps are read only
     // so if you do maps.first[columnId]  = 2, it would throw an exception
+
     return List<TodayModel>.from(maps.map((map) {
       return TodayModel.fromJson(map);
     }));
@@ -112,4 +149,19 @@ class EverydayLocalDataSource {
     await File(videoPath).delete();
     await db!.delete(todayTable, where: '$columnId = ?', whereArgs: [id]);
   }
+
+  Future<void> updateEmailForPreviousRows(String currentUserEmail) async {
+    if (_databaseVersion != 2) {
+      return;
+    }
+    final db = await database;
+    db!.update(todayTable, {columnEmail: currentUserEmail},
+        where: '$columnEmail = ?', whereArgs: ['']);
+  }
 }
+
+
+//  for (var row
+//         in (await db!.query('sqlite_master', columns: ['type', 'name']))) {
+//       print(row.values);
+//     }

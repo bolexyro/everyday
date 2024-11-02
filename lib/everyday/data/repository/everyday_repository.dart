@@ -25,6 +25,10 @@ class EverydayRepositoryImpl implements EverydayRepository {
         .toList();
   }
 
+@override
+  Future<void> updateEmailForPreviousRows(String email) async{
+   await  localDataSource.updateEmailForPreviousRows(email);
+  }
   @override
   Future<void> uploadEveryday() {
     // TODO: implement uploadEveryday

@@ -11,7 +11,8 @@ class ProfileDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.read(authProvider).user!;
-   double dragDistance = 0; // Track the drag distance
+    
+    double dragDistance = 0; 
 
     return GestureDetector(
       onPanUpdate: (details) {
@@ -40,7 +41,10 @@ class ProfileDialog extends ConsumerWidget {
                     ),
                   ],
                 ),
-                const Text('Everyday')
+                Text(
+                  'Everyday',
+                  style: context.textTheme.bodyLarge,
+                )
               ],
             ),
             Container(
@@ -87,7 +91,7 @@ class ProfileDialog extends ConsumerWidget {
                     height: 0,
                     thickness: 2,
                   ),
-                  Column( 
+                  Column(
                     children: [
                       _DialogItem(
                         onTap: () {},
