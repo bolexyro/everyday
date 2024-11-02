@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myapp/auth/data/repository/auth_repository.dart';
-import 'package:myapp/everyday/data/data_sources/everyday_local_data_source.dart';
+import 'package:myapp/everyday/data/data_sources/local/everyday_local_data_source.dart';
 import 'package:myapp/everyday/data/repository/everyday_repository.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
 import 'package:myapp/everyday/domain/use_cases/add_today.dart';

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:myapp/core/extensions.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
@@ -21,7 +23,7 @@ class TodayBlock extends StatelessWidget {
       feedback: SizedBox(
         width: 80,
         height: 200,
-        child: Image.memory(today.thumbnail),
+        child: Image.file(File(today.thumbnailPath)),
       ),
       data: today,
       onDragStarted: () => onDragStartedOrEnded(true),
@@ -49,8 +51,8 @@ class TodayBlock extends StatelessWidget {
           child: Column(
             children: [
               Expanded(
-                child: Image.memory(
-                  today.thumbnail,
+                child: Image.file(
+                  File(today.thumbnailPath),
                   fit: BoxFit.fill,
                 ),
               ),

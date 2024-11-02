@@ -1,4 +1,4 @@
-import 'package:myapp/everyday/data/data_sources/everyday_local_data_source.dart';
+import 'package:myapp/everyday/data/data_sources/local/everyday_local_data_source.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
 import 'package:myapp/everyday/domain/repository/everyday_repository.dart';
 

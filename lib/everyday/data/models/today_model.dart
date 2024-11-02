@@ -1,7 +1,4 @@
-import 'dart:typed_data';
-
 import 'package:json_annotation/json_annotation.dart';
-import 'package:myapp/core/converter/uint8_list_converter.dart';
 part 'today_model.g.dart';
 
 @JsonSerializable()
@@ -11,7 +8,7 @@ class TodayModel {
     required this.caption,
     required this.videoPath,
     required this.date,
-    required this.thumbnail,
+    required this.thumbnailPath,
     required this.email,
   });
 
@@ -19,8 +16,7 @@ class TodayModel {
   final String caption;
   final String videoPath;
   final DateTime date;
-  @Uint8ListConverter()
-  final Uint8List thumbnail;
+  final String thumbnailPath;
   final String email;
 
   factory TodayModel.fromJson(Map<String, dynamic> json) =>
