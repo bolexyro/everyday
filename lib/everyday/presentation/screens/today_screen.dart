@@ -23,7 +23,7 @@ class _TodayScreenState extends State<TodayScreen> {
   void initState() {
     player = Player();
     controller = VideoController(player);
-    player.open(Media(widget.today.videoPath));
+    player.open(Media(widget.today.localVideoPath ?? widget.today.remoteVideoUrl!));
 
     super.initState();
   }

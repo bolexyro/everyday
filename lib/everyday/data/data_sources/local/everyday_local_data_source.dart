@@ -44,9 +44,9 @@ class EverydayLocalDataSource {
     final today = TodayModel(
       id: savedVideoId,
       caption: caption,
-      videoPath: savedVideoFile.path,
+      localVideoPath: savedVideoFile.path,
       date: DateTime.now(),
-      thumbnailPath: savedThumbnailFile.path,
+      localThumbnailPath: savedThumbnailFile.path,
       email: currentUserEmail,
     );
 
@@ -62,6 +62,7 @@ class EverydayLocalDataSource {
       where: '${TodayDatabaseHelper.columnEmail} = ?',
       whereArgs: [currentUserEmail],
     );
+    print(maps);
     return List<TodayModel>.from(maps.map((map) {
       return TodayModel.fromJson(map);
     }));

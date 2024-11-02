@@ -28,13 +28,14 @@ class BackUpBottomSheet extends ConsumerWidget {
                   children: [
                     Text(
                       'Keep your todays safe',
-                      style: context.textTheme.headlineMedium,
+                      style: context.textTheme.titleLarge,
                     ),
-                    const Gap(20),
+                    const Gap(12),
                     Text(
                       'Your todays will be securely backed up to  your Everyday Account',
                       textAlign: TextAlign.center,
-                      style: context.textTheme.bodyLarge,
+                      style: context.textTheme.titleSmall
+                          ?.copyWith(fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),

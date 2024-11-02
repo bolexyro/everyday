@@ -32,7 +32,7 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
   }
 
   Future<void> deleteToday(Today today) async {
-    await _deleteTodayUseCase.call(today.id, today.videoPath);
+    // await _deleteTodayUseCase.call(today.id, today.localVideoPath);
     state = state.where((eachToday) => eachToday != today).toList();
   }
 }

@@ -23,7 +23,9 @@ class TodayBlock extends StatelessWidget {
       feedback: SizedBox(
         width: 80,
         height: 200,
-        child: Image.file(File(today.thumbnailPath)),
+        child: today.localThumbnailPath == null
+            ? Image.network(today.remoteThumbnailUrl!)
+            : Image.file(File(today.localThumbnailPath!)),
       ),
       data: today,
       onDragStarted: () => onDragStartedOrEnded(true),
@@ -51,10 +53,12 @@ class TodayBlock extends StatelessWidget {
           child: Column(
             children: [
               Expanded(
-                child: Image.file(
-                  File(today.thumbnailPath),
-                  fit: BoxFit.fill,
-                ),
+                child: today.localThumbnailPath == null
+                    ? Image.network(today.remoteThumbnailUrl!)
+                    : Image.file(
+                        File(today.localThumbnailPath!),
+                        fit: BoxFit.fill,
+                      ),
               ),
               Container(
                 width: double.infinity,

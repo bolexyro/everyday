@@ -6,17 +6,21 @@ class TodayModel {
   const TodayModel({
     required this.id,
     required this.caption,
-    required this.videoPath,
+    this.localVideoPath,
+    this.remoteVideoUrl,
     required this.date,
-    required this.thumbnailPath,
+    this.localThumbnailPath,
+    this.remoteThumbnailUrl,
     required this.email,
   });
 
   final String id;
   final String caption;
-  final String videoPath;
+  final String? localVideoPath;
+  final String? remoteVideoUrl;
   final DateTime date;
-  final String thumbnailPath;
+  final String? localThumbnailPath;
+  final String? remoteThumbnailUrl;
   final String email;
 
   factory TodayModel.fromJson(Map<String, dynamic> json) =>
