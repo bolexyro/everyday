@@ -87,7 +87,8 @@ class EverydayLocalDataSource {
 
   static Future<void> _databaseVersion3(sql.Database db) async {
     const newTableName = 'today_new';
-    await db.execute('''
+    final batch = db.batch();
+    batch.execute('''
     CREATE TABLE $newTableName (
       $columnId TEXT PRIMARY KEY,
       $columnCaption TEXT NOT NULL,
@@ -97,15 +98,11 @@ class EverydayLocalDataSource {
       $columnEmail TEXT NOT NULL
     )
   ''');
-    await db.execute(
+    batch.execute(
         "INSERT INTO $newTableName ($columnId, $columnCaption, $columnVideoPath, $columnDate, $columnThumbnail, $columnEmail) SELECT $columnId, $columnCaption, $columnVideoPath, $columnDate, $columnThumbnail, $columnEmail FROM $todayTable");
-    print('Inserted data into new table from old table'); // Log data insertion
-
-    await db.execute("DROP TABLE $todayTable");
-    print('Dropped old table: $todayTable'); // Log table drop
-
-    await db.execute("ALTER TABLE $newTableName RENAME TO $todayTable");
-    print('Renamed new table to: $todayTable'); // Log table rename
+    batch.execute("DROP TABLE $todayTable");
+    batch.execute("ALTER TABLE $newTableName RENAME TO $todayTable");
+    await batch.commit(noResult: true);
   }
 
   Future<TodayModel> insert(String videoPath, String caption) async {
@@ -138,7 +135,6 @@ class EverydayLocalDataSource {
     final List<Map<String, dynamic>> maps = await db!.query(todayTable);
     // resulting maps are read only
     // so if you do maps.first[columnId]  = 2, it would throw an exception
-
     return List<TodayModel>.from(maps.map((map) {
       return TodayModel.fromJson(map);
     }));

@@ -15,9 +15,7 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
     this._readEverydayUseCase,
     this._deleteTodayUseCase,
     this._updateEmailsPreviousRowsUseCase,
-  ) : super([]) {
-    _updateEmailsPreviousRowsUseCase();
-  }
+  ) : super([]);
   final AddTodayUseCase _addTodayUseCase;
   final ReadEverydayUseCase _readEverydayUseCase;
   final DeleteTodayUseCase _deleteTodayUseCase;
@@ -29,6 +27,7 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
   }
 
   Future<void> getEveryday() async {
+    await _updateEmailsPreviousRowsUseCase.call();
     state = await _readEverydayUseCase.call();
   }
 

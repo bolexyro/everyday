@@ -5,7 +5,6 @@ import 'package:myapp/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/everyday/presentation/components/everyday_grid_view.dart';
 import 'package:myapp/everyday/presentation/components/profile_dialog.dart';
 import 'package:myapp/everyday/presentation/components/today_caption_dialog.dart';
-import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -23,12 +22,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     setState(() {
       _fabIsExtended = extend;
     });
-  }
-
-  @override
-  void initState() {
-    ref.read(everydayProvider.notifier).getEveryday();
-    super.initState();
   }
 
   @override
