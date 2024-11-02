@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:myapp/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/core/extensions.dart';
+import 'package:myapp/everyday/presentation/components/back_up_bottom_sheet.dart';
 import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
 
 class ProfileDialog extends ConsumerWidget {
@@ -11,8 +12,8 @@ class ProfileDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.read(authProvider).user!;
-    
-    double dragDistance = 0; 
+
+    double dragDistance = 0;
 
     return GestureDetector(
       onPanUpdate: (details) {
@@ -29,7 +30,7 @@ class ProfileDialog extends ConsumerWidget {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(width: double.infinity),
+            SizedBox(width: MediaQuery.sizeOf(context).width),
             Stack(
               alignment: Alignment.center,
               children: [
@@ -69,7 +70,10 @@ class ProfileDialog extends ConsumerWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(user.name),
+                              Text(
+                                user.name,
+                                style: context.textTheme.titleMedium,
+                              ),
                               Text(
                                 user.email,
                                 maxLines: 1,
@@ -95,9 +99,25 @@ class ProfileDialog extends ConsumerWidget {
                     children: [
                       _DialogItem(
                         onTap: () {},
-                        title: 'Backup',
+                        title: 'Backup is off',
+                        subTitle:
+                            'Keep your todays safe by backing them up to your everyday account',
+                        button: TextButton(
+                          onPressed: () => showModalBottomSheet(
+                            context: context,
+                            builder: (context) => const BackUpBottomSheet(),
+                            isScrollControlled: true,
+                            enableDrag: false,
+                            sheetAnimationStyle: AnimationStyle.noAnimation,
+                          ),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
+                          ),
+                          child: const Text('Turn on backup'),
+                        ),
                         icon: Icons.backup_outlined,
                       ),
+                      // ListTile(),
                       _DialogItem(
                         onTap: () {},
                         title: 'Share with a partner',
@@ -161,11 +181,15 @@ class _DialogItem extends StatelessWidget {
   const _DialogItem({
     required this.onTap,
     required this.title,
+    this.subTitle,
     required this.icon,
+    this.button,
   });
 
   final VoidCallback onTap;
   final String title;
+  final String? subTitle;
+  final Widget? button;
   final IconData icon;
 
   @override
@@ -179,6 +203,9 @@ class _DialogItem extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
+              crossAxisAlignment: subTitle == null
+                  ? CrossAxisAlignment.center
+                  : CrossAxisAlignment.start,
               children: [
                 SizedBox.square(
                   dimension: 40,
@@ -187,7 +214,23 @@ class _DialogItem extends StatelessWidget {
                   ),
                 ),
                 const Gap(12),
-                Text(title),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: context.textTheme.titleMedium,
+                      ),
+                      if (subTitle != null)
+                        Text(
+                          subTitle!,
+                          style: context.textTheme.bodyMedium,
+                        ),
+                      if (button != null) button!
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
