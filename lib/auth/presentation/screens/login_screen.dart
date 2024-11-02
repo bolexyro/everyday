@@ -22,7 +22,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
-    )..repeat();
+    );
   }
 
   @override
@@ -53,19 +53,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               child: Column(
                 children: [
                   const Gap(32),
-                  _isAuthenticating
-                      ? RotationTransition(
-                          turns: Tween<double>(begin: 0, end: 1).animate(_controller),
-                          child: Image.asset(
-                            'everyday_logo'.png,
-                            color: Colors.black,
-                            // : 100, // Adjust the size if needed
-                          ),
-                        )
-                      : Image.asset(
-                          'everyday_logo'.png,
-                          color: Colors.black,
-                        ),
+                  RotationTransition(
+                    turns: Tween<double>(begin: 0, end: 1).animate(_controller),
+                    child: Image.asset(
+                      'everyday_logo'.png,
+                      color: Colors.black,
+                      // : 100, // Adjust the size if needed
+                    ),
+                  )
                 ],
               ),
             ),
@@ -107,15 +102,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           : () async {
                               setState(() {
                                 _isAuthenticating = true;
+                                _controller.repeat();
                               });
                               await ref.read(authProvider.notifier).login();
                               setState(() {
                                 _isAuthenticating = false;
+                                _controller.stop();
+                                _controller.reset();
                               });
                             },
                       icon: _isAuthenticating
                           ? const SizedBox.square(
-                              dimension: 24, child: SizedBox())
+                              dimension: 24,
+                              child: CircularProgressIndicator(),
+                            )
                           : Image.asset(
                               'google_logo'.png,
                               height: 24,

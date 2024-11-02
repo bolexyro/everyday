@@ -11,7 +11,7 @@ class ProfileDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.read(authProvider).user!;
-    double dragDistance = 0; // Track the drag distance
+   double dragDistance = 0; // Track the drag distance
 
     return GestureDetector(
       onPanUpdate: (details) {
@@ -28,6 +28,7 @@ class ProfileDialog extends ConsumerWidget {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const SizedBox(width: double.infinity),
             Stack(
               alignment: Alignment.center,
               children: [
@@ -68,6 +69,7 @@ class ProfileDialog extends ConsumerWidget {
                               Text(
                                 user.email,
                                 maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
@@ -85,12 +87,17 @@ class ProfileDialog extends ConsumerWidget {
                     height: 0,
                     thickness: 2,
                   ),
-                  Column(
+                  Column( 
                     children: [
                       _DialogItem(
                         onTap: () {},
                         title: 'Backup',
                         icon: Icons.backup_outlined,
+                      ),
+                      _DialogItem(
+                        onTap: () {},
+                        title: 'Share with a partner',
+                        icon: Icons.swap_horizontal_circle_outlined,
                       ),
                       _DialogItem(
                         onTap: () {},
@@ -116,7 +123,10 @@ class ProfileDialog extends ConsumerWidget {
                   onPressed: () {},
                   style: TextButton.styleFrom(
                       foregroundColor: context.colorScheme.onSurface),
-                  child: const Text('Privacy Policy'),
+                  child: Text(
+                    'Privacy Policy',
+                    style: context.textTheme.bodySmall,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 0.0),
@@ -129,10 +139,13 @@ class ProfileDialog extends ConsumerWidget {
                   onPressed: () {},
                   style: TextButton.styleFrom(
                       foregroundColor: context.colorScheme.onSurface),
-                  child: const Text('Terms of Service'),
+                  child: Text(
+                    'Terms of Service',
+                    style: context.textTheme.bodySmall,
+                  ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

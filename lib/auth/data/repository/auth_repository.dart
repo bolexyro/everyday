@@ -35,8 +35,9 @@ class AuthRepositoryImpl implements AuthRepository {
             isAuthenticated: true,
             user: AppUser(
               email: user.email!,
-              name: 'Bolexyro Nations',
-              photoUrl: 'https://avatars.githubusercontent.com/u/113560716?v=4',
+              name: user.userMetadata!['name'] ?? 'Unknown',
+              photoUrl: user.userMetadata!['picture'] ??
+                  user.userMetadata!['avatar_url'],
             ),
           ),
         );
@@ -59,8 +60,9 @@ class AuthRepositoryImpl implements AuthRepository {
     }
     return AppUser(
       email: user.email!,
-      name: 'Bolexyro Nations',
-      photoUrl: 'https://avatars.githubusercontent.com/u/113560716?v=4',
+      name: user.userMetadata!['name'] ?? 'Unknown',
+      photoUrl:
+          user.userMetadata!['picture'] ?? user.userMetadata!['avatar_url'],
     );
   }
 

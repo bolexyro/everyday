@@ -6,6 +6,7 @@ import 'package:myapp/everyday/presentation/components/everyday_grid_view.dart';
 import 'package:myapp/everyday/presentation/components/profile_dialog.dart';
 import 'package:myapp/everyday/presentation/components/today_caption_dialog.dart';
 import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -36,15 +37,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Everyday'),
+        centerTitle: true,
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 12.0),
+            padding: const EdgeInsets.only(right: 16.0),
             child: GestureDetector(
               onTap: () => showDialog(
                 context: context,
                 builder: (context) => const ProfileDialog(),
               ),
               child: CircleAvatar(
+                radius: 15,
                 backgroundImage:
                     NetworkImage(ref.read(authProvider).user!.photoUrl),
               ),
