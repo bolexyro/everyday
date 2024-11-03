@@ -7,8 +7,10 @@ class EverydayRepositoryImpl implements EverydayRepository {
   final EverydayLocalDataSource localDataSource;
 
   @override
-  Future<Today> addToday(String videoPath, String caption, String currentUserEmail) async {
-    final savedTodayModel = await localDataSource.insert(videoPath, caption,currentUserEmail);
+  Future<Today> addToday(
+      String videoPath, String caption, String currentUserEmail) async {
+    final savedTodayModel =
+        await localDataSource.insert(videoPath, caption, currentUserEmail);
     return Today.fromModel(savedTodayModel);
   }
 
@@ -18,19 +20,20 @@ class EverydayRepositoryImpl implements EverydayRepository {
   }
 
   @override
-  Future<List<Today>> readEveryday(String currentUserEmail) async {
+  Future<List<Today>> readEveryday(currentUserEmail) async {
     final allSavedTodays = await localDataSource.readAll(currentUserEmail);
     return allSavedTodays
         .map((todayModel) => Today.fromModel(todayModel))
         .toList();
   }
 
-@override
-  Future<void> updateEmailForPreviousRows(String email) async{
-   await  localDataSource.updateEmailForPreviousRows(email);
-  }
   @override
-  Future<void> uploadEveryday() {
+  Future<void> updateEmailForPreviousRows(email) async {
+    await localDataSource.updateEmailForPreviousRows(email);
+  }
+
+  @override
+  Future<void> backupEveryday(everyday) {
     // TODO: implement uploadEveryday
     throw UnimplementedError();
   }
