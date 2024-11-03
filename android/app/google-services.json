@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "637763517736",
+    "project_id": "everyday-a3a63",
+    "storage_bucket": "everyday-a3a63.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:637763517736:android:998b94a4e7cee241b1241d",
+        "android_client_info": {
+          "package_name": "com.example.everyday"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAILO9fwl5X-1RPpHiX5nQCsuNnWuK685M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
