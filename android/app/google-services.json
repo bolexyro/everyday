@@ -12,7 +12,12 @@
           "package_name": "com.example.everyday"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "637763517736-sqekfv0qtrcnj1nh67t88bklde74iv1o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAILO9fwl5X-1RPpHiX5nQCsuNnWuK685M"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "637763517736-piitkhlgbvhlqv36egrkeoku527u4qgq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "637763517736-tjfnq3p5tp1tlou3607qhbs6pbfr7d4d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.everyday"
+              }
+            }
+          ]
         }
       }
     }

@@ -69,6 +69,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '637763517736',
     projectId: 'everyday-a3a63',
     storageBucket: 'everyday-a3a63.appspot.com',
+    iosClientId: '637763517736-tjfnq3p5tp1tlou3607qhbs6pbfr7d4d.apps.googleusercontent.com',
     iosBundleId: 'com.example.everyday',
   );
+
 }

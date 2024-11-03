@@ -1,51 +1,40 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:myapp/auth/domain/auth_state.dart';
 import 'package:myapp/auth/domain/entity/user.dart';
 import 'package:myapp/auth/domain/repository/auth_repository.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  AuthRepositoryImpl(this.supabaseClient) {
+  AuthRepositoryImpl(this.firebaseAuth) {
     _initializeAuthStateListener();
   }
-
-  final SupabaseClient supabaseClient;
+  final FirebaseAuth firebaseAuth;
   final _authStateController = StreamController<AppAuthState>();
-  final webClientId =
-      '260386231659-g4u93n6lfvvfch4uf3fja488lvno63b2.apps.googleusercontent.com';
-  late final googleSignIn = GoogleSignIn(
-    serverClientId: webClientId,
-  );
+  late final googleSignIn = GoogleSignIn();
 
   @override
   Stream<AppAuthState> get authStateChanges => _authStateController.stream;
 
   void _initializeAuthStateListener() {
-    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      final AuthChangeEvent event = data.event;
-      final session = data.session;
-
-      if (event == AuthChangeEvent.signedIn) {
-        final user = session!.user;
+    firebaseAuth.authStateChanges().listen((user) {
+      if (user != null) {
         _authStateController.add(
           AppAuthState(
             isAuthenticated: true,
             user: AppUser(
               email: user.email!,
-              name: user.userMetadata!['name'] ?? 'Unknown',
-              photoUrl: user.userMetadata!['picture'] ??
-                  user.userMetadata!['avatar_url'],
+              name: user.providerData.first.displayName ?? 'Bolexyro NAtions',
+              photoUrl: user.providerData.first.photoURL ??
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpt04Av779EWVHmAKPWu4X1fKJ3t8rQ__Ztw&s',
             ),
           ),
         );
-      } else if (event == AuthChangeEvent.signedOut) {
+      } else {
         _authStateController.add(
-          AppAuthState(
+          const AppAuthState(
             isAuthenticated: false,
-            user: AppUser.anonymous(),
           ),
         );
       }
@@ -54,15 +43,15 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   AppUser? get currentUser {
-    final user = supabaseClient.auth.currentUser;
+    final user = firebaseAuth.currentUser;
     if (user == null) {
       return null;
     }
     return AppUser(
       email: user.email!,
-      name: user.userMetadata!['name'] ?? 'Unknown',
-      photoUrl:
-          user.userMetadata!['picture'] ?? user.userMetadata!['avatar_url'],
+      name: user.providerData.first.displayName ?? 'Bolexyro NAtions',
+      photoUrl: user.providerData.first.photoURL ??
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpt04Av779EWVHmAKPWu4X1fKJ3t8rQ__Ztw&s',
     );
   }
 
@@ -73,31 +62,19 @@ class AuthRepositoryImpl implements AuthRepository {
     if (googleUser == null) {
       return;
     }
-    final googleAuth = await googleUser.authentication;
-    final accessToken = googleAuth.accessToken;
-    final idToken = googleAuth.idToken;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
 
-    if (accessToken == null) {
-      throw 'No Access Token found.';
-    }
-    if (idToken == null) {
-      throw 'No ID Token found.';
-    }
-    if (kIsWeb) {
-      await supabaseClient.auth.signInWithOAuth(OAuthProvider.google);
-      return;
-    }
-
-    await supabaseClient.auth.signInWithIdToken(
-      provider: OAuthProvider.google,
-      idToken: idToken,
-      accessToken: accessToken,
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
     );
+    await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   @override
   Future<void> logout() async {
     await googleSignIn.signOut();
-    await supabaseClient.auth.signOut();
+    await firebaseAuth.signOut();
   }
 }
