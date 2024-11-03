@@ -16,9 +16,9 @@ class BackUpBottomSheet extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Row(),
-          const SizedBox.square(
+          SizedBox.square(
             dimension: 160,
-            child: Icon(Icons.backup),
+            child: Image.asset('backup'.png),
           ),
           LayoutBuilder(
             builder: (context, constraints) {

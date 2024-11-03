@@ -62,7 +62,6 @@ class EverydayLocalDataSource {
       where: '${TodayDatabaseHelper.columnEmail} = ?',
       whereArgs: [currentUserEmail],
     );
-    print(maps);
     return List<TodayModel>.from(maps.map((map) {
       return TodayModel.fromJson(map);
     }));

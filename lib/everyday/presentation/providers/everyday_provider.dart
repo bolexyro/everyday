@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myapp/auth/data/repository/auth_repository.dart';
 import 'package:myapp/everyday/data/data_sources/local/everyday_local_data_source.dart';
@@ -7,7 +8,6 @@ import 'package:myapp/everyday/domain/use_cases/add_today.dart';
 import 'package:myapp/everyday/domain/use_cases/delete_today.dart';
 import 'package:myapp/everyday/domain/use_cases/read_everyday.dart';
 import 'package:myapp/everyday/domain/use_cases/update_emails_previous_rows.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class EverydayNotifier extends StateNotifier<List<Today>> {
   EverydayNotifier(
@@ -40,12 +40,11 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
 final everydayProvider = StateNotifierProvider<EverydayNotifier, List<Today>>(
   (ref) => EverydayNotifier(
     AddTodayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource()),
-        AuthRepositoryImpl(Supabase.instance.client)),
+        AuthRepositoryImpl(FirebaseAuth.instance)),
     ReadEverydayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource()),
-        AuthRepositoryImpl(Supabase.instance.client)),
+        AuthRepositoryImpl(FirebaseAuth.instance)),
     DeleteTodayUseCase(EverydayRepositoryImpl(EverydayLocalDataSource())),
-    UpdateEmailsPreviousRowsUseCase(
-        AuthRepositoryImpl(Supabase.instance.client),
+    UpdateEmailsPreviousRowsUseCase(AuthRepositoryImpl(FirebaseAuth.instance),
         EverydayRepositoryImpl(EverydayLocalDataSource())),
   ),
 );

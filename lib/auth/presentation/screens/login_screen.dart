@@ -53,14 +53,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               child: Column(
                 children: [
                   const Gap(32),
-                  RotationTransition(
-                    turns: Tween<double>(begin: 0, end: 1).animate(_controller),
-                    child: Image.asset(
-                      'everyday_logo'.png,
-                      color: Colors.black,
-                      // : 100, // Adjust the size if needed
-                    ),
-                  )
+                  Image.asset(
+                    'everyday_logo'.png,
+                    color: Colors.black,
+                  ),
                 ],
               ),
             ),
@@ -112,9 +108,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               });
                             },
                       icon: _isAuthenticating
-                          ? const SizedBox.square(
+                          ? SizedBox.square(
                               dimension: 24,
-                              child: CircularProgressIndicator(),
+                              child: RotationTransition(
+                                turns: Tween<double>(begin: 0, end: 1)
+                                    .animate(_controller),
+                                child: Image.asset(
+                                  'everyday_logo'.png,
+                                  color: Colors.black,
+                                ),
+                              ),
                             )
                           : Image.asset(
                               'google_logo'.png,

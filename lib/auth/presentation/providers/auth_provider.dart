@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myapp/auth/data/repository/auth_repository.dart';
@@ -8,7 +9,6 @@ import 'package:myapp/auth/domain/usecases/login.dart';
 import 'package:myapp/auth/domain/usecases/logout.dart';
 import 'package:myapp/auth/presentation/screens/login_screen.dart';
 import 'package:myapp/everyday/presentation/screens/home_screen.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -68,17 +68,23 @@ final authProvider = StateNotifierProvider<AuthNotifier, AppAuthState>(
   (ref) => AuthNotifier(
     LoginUseCase(
       AuthRepositoryImpl(
-        Supabase.instance.client,
+        FirebaseAuth.instance,
       ),
     ),
     AuthStateChangeUseCase(
-      AuthRepositoryImpl(Supabase.instance.client),
+      AuthRepositoryImpl(
+        FirebaseAuth.instance,
+      ),
     ),
     GetCurrentUserUseCase(
-      AuthRepositoryImpl(Supabase.instance.client),
+      AuthRepositoryImpl(
+        FirebaseAuth.instance,
+      ),
     ),
     LogoutUseCase(
-      AuthRepositoryImpl(Supabase.instance.client),
+      AuthRepositoryImpl(
+        FirebaseAuth.instance,
+      ),
     ),
   ),
 );
