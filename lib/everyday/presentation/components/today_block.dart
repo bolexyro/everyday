@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/core/extensions.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
@@ -54,9 +55,13 @@ class TodayBlock extends StatelessWidget {
             children: [
               Expanded(
                 child: today.localThumbnailPath == null
-                    ? Image.network(
-                        today.remoteThumbnailUrl!,
-                        errorBuilder: (context, error, stackTrace) =>
+                    ? CachedNetworkImage(
+                        imageUrl: today.remoteThumbnailUrl!,
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) =>
+                                CircularProgressIndicator(
+                                    value: downloadProgress.progress),
+                        errorWidget: (context, url, error) =>
                             const Icon(Icons.wifi_off_outlined),
                       )
                     : Image.file(
