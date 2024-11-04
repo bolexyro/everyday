@@ -37,6 +37,7 @@ class EverydayRepositoryImpl implements EverydayRepository {
   Future<List<Today>> readEveryday(currentUserEmail) async {
     final allLocallyAvilableTodayModels =
         await localDataSource.readAll(currentUserEmail);
+
     final allLocallyAvilableTodayEntities = allLocallyAvilableTodayModels
         .map((todayModel) => Today.fromModel(todayModel))
         .toList();
@@ -57,8 +58,23 @@ class EverydayRepositoryImpl implements EverydayRepository {
       // so anything in cloud not in local should be collected
       if (!allLocallyAvilableTodayEntities.contains(cloudToday)) {
         allTodays.add(cloudToday);
+        await localDataSource.insert(
+          '',
+          '',
+          '',
+          todayParam: TodayModel(
+            id: cloudToday.id,
+            caption: cloudToday.caption,
+            date: cloudToday.date,
+            email: currentUserEmail,
+            remoteThumbnailUrl: cloudToday.remoteThumbnailUrl,
+            remoteVideoUrl: cloudToday.remoteVideoUrl,
+          ),
+        );
       }
     }
+
+    allTodays.sort((a, b) => a.date.compareTo(b.date));
 
     return allLocallyAvilableTodayEntities..addAll(allTodays);
   }

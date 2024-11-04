@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:myapp/core/resources/local_buckets.dart';
 import 'package:myapp/everyday/data/data_sources/local/everyday_db_helper.dart';
 import 'package:myapp/everyday/data/models/today_model.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:uuid/uuid.dart';
@@ -31,25 +30,28 @@ class EverydayLocalDataSource {
   }
 
   Future<TodayModel> insert(
-      String videoPath, String caption, String currentUserEmail) async {
+      String videoPath, String caption, String currentUserEmail,
+      {TodayModel? todayParam}) async {
+    // if today is provided, then we are inserting from the cloud
+    if (todayParam != null) {
+      final db = await database;
+
+      await db!.insert(TodayDatabaseHelper.todayTable, todayParam.toJson());
+      return todayParam;
+    }
     final uint8list = await VideoThumbnail.thumbnailData(
       video: videoPath,
       imageFormat: ImageFormat.JPEG,
       quality: 25,
     );
 
-    final directory = await getApplicationDocumentsDirectory();
-
     final savedVideoId = const Uuid().v4();
-    final savedVideoFile =
-        await File('${directory.path}/${LocalBuckets.videos}/$savedVideoId.mp4')
-            .create(recursive: true);
-
+    final savedVideoFile = await FilePathManager()
+        .createFile(await FilePathManager().getVideoPath(savedVideoId));
     await File(videoPath).copy(savedVideoFile.path);
 
-    final savedThumbnailFile = await File(
-            '${directory.path}/${LocalBuckets.thumbnails}/$savedVideoId.jpg')
-        .create(recursive: true)
+    final savedThumbnailFile = await FilePathManager()
+        .createFile(await FilePathManager().getThumbnailPath(savedVideoId))
       ..writeAsBytes(uint8list!);
 
     final today = TodayModel(
@@ -73,7 +75,6 @@ class EverydayLocalDataSource {
       where: '${TodayDatabaseHelper.columnEmail} = ?',
       whereArgs: [currentUserEmail],
     );
-    print(rows);
     return List<TodayModel>.from(rows.map((map) {
       return TodayModel.fromJson(map);
     }));

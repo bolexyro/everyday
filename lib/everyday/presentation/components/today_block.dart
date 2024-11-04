@@ -54,23 +54,42 @@ class TodayBlock extends StatelessWidget {
             children: [
               Expanded(
                 child: today.localThumbnailPath == null
-                    ? Image.network(today.remoteThumbnailUrl!)
+                    ? Image.network(
+                        today.remoteThumbnailUrl!,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.wifi_off_outlined),
+                      )
                     : Image.file(
                         File(today.localThumbnailPath!),
                         fit: BoxFit.fill,
                       ),
               ),
-              Container(
-                width: double.infinity,
-                height: 30,
-                color: context.colorScheme.onSecondaryContainer,
-                child: Center(
-                  child: Text(
-                    today.date.formatDateWithShortDay,
-                    style:
-                        TextStyle(color: context.colorScheme.surfaceContainer),
+              Stack(
+                alignment: Alignment.centerRight,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 30,
+                    color: context.colorScheme.onSecondaryContainer,
+                    child: Center(
+                      child: Text(
+                        today.date.formatDateWithShortDay,
+                        style: TextStyle(
+                            color: context.colorScheme.surfaceContainer),
+                      ),
+                    ),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 4.0),
+                    child: Icon(
+                      size: 18,
+                      today.isBackedUp
+                          ? Icons.cloud_done_outlined
+                          : Icons.cloud_off_outlined,
+                      color: context.colorScheme.surfaceContainer,
+                    ),
+                  )
+                ],
               ),
             ],
           ),
