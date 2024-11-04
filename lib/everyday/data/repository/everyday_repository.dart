@@ -35,10 +35,32 @@ class EverydayRepositoryImpl implements EverydayRepository {
 
   @override
   Future<List<Today>> readEveryday(currentUserEmail) async {
-    final allSavedTodays = await localDataSource.readAll(currentUserEmail);
-    return allSavedTodays
+    final allLocallyAvilableTodayModels =
+        await localDataSource.readAll(currentUserEmail);
+    final allLocallyAvilableTodayEntities = allLocallyAvilableTodayModels
         .map((todayModel) => Today.fromModel(todayModel))
         .toList();
+    final List<Today> allCloudStoredTodays = [];
+    final querySnapshot = await remoteDb
+        .collection("everyday")
+        .where("email", isEqualTo: currentUserEmail)
+        .get();
+    for (final docSnapshot in querySnapshot.docs) {
+      allCloudStoredTodays
+          .add(Today.fromModel(TodayModel.fromJson(docSnapshot.data())));
+    }
+
+    final List<Today> allTodays = [];
+
+    for (final cloudToday in allCloudStoredTodays) {
+      // syncing is getting what is in cloud and making it available locally
+      // so anything in cloud not in local should be collected
+      if (!allLocallyAvilableTodayEntities.contains(cloudToday)) {
+        allTodays.add(cloudToday);
+      }
+    }
+
+    return allLocallyAvilableTodayEntities..addAll(allTodays);
   }
 
   @override

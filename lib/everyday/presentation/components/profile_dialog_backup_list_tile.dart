@@ -69,10 +69,10 @@ class _BackupListTileState extends ConsumerState<ProfileDialogBackupListTile> {
         title: 'Backup is ${backupOnOffStatus.isOn ? 'on' : 'off'}',
         subTitle: backupOnOffStatus.isOn == true
             ? totalNumberofTodays.isEmpty
-                ? 'You have no today'
+                ? 'Nothing to backup'
                 : numberOfUnbackedupTodays == 0
                     ? 'Your everyday is backed up'
-                    : 'You have $numberOfUnbackedupTodays unbacked up todays'
+                    : 'You have $numberOfUnbackedupTodays unbackedup todays'
             : 'Keep your todays safe by backing them up to your everyday account',
         button: backupOnOffStatus.isOn && numberOfUnbackedupTodays == 0
             ? null
@@ -137,7 +137,6 @@ class _ProfileDialogItemBackingUpState
           context.navigator.push(context.route(const BackupSettingsScreen())),
       title: 'Backup',
       subTitle: 'Backing up · ${widget.backupProgressState.left} today left',
-      button: null,
       icon: CircularPercentIndicator(
         radius: 12.0,
         lineWidth: 2.0,
