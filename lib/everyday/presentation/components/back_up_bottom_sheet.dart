@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:myapp/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/core/extensions.dart';
+import 'package:myapp/everyday/presentation/providers/backup_on_off_status_provider.dart';
 import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
 
 class BackUpBottomSheet extends ConsumerStatefulWidget {
@@ -73,22 +74,20 @@ class _BackUpBottomSheetState extends ConsumerState<BackUpBottomSheet> {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () async {
-                    context.navigator.pop();
                     setState(() {
                       _isLoading = true;
                     });
                     await ref
-                        .read(everydayProvider.notifier)
+                        .read(backupOnOffStatusStateProvider.notifier)
                         .saveBackupStatus(true);
 
+                    setState(() {
+                      _isLoading = false;
+                    });
+                    ref.read(everydayProvider.notifier).backupEveryday();
                     if (context.mounted) {
-                      setState(() {
-                        _isLoading = false;
-                      });
+                      context.navigator.pop();
                     }
-                    ref
-                        .read(everydayProvider.notifier)
-                        .uploadEveryday(ref.read(authProvider).user!.email);
                   },
                   child: _isLoading
                       ? const SizedBox.square(

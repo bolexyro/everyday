@@ -1,10 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myapp/everyday/domain/entities/backup_progress.dart';
 
-class BackupNotifier extends StateNotifier<BackupProgress> {
-  BackupNotifier() : super(BackupProgress.isNotUploading());
+class BackupProgressNotifier extends StateNotifier<BackupProgress> {
+  BackupProgressNotifier() : super(BackupProgress.isNotUploading());
   void updateBackupProgress(BackupProgress progress) {
-    print(progress.progress);
     if (progress.progress == 1) {
       state = BackupProgress.isNotUploading();
       return;
@@ -13,6 +12,6 @@ class BackupNotifier extends StateNotifier<BackupProgress> {
   }
 }
 
-final backupStateProvider =
-    StateNotifierProvider<BackupNotifier, BackupProgress>(
-        (ref) => BackupNotifier());
+final backupProgressStateProvider =
+    StateNotifierProvider<BackupProgressNotifier, BackupProgress>(
+        (ref) => BackupProgressNotifier());

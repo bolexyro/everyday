@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:myapp/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/core/extensions.dart';
-import 'package:myapp/everyday/presentation/components/backup_list_tile.dart';
+import 'package:myapp/everyday/presentation/components/profile_dialog_backup_list_tile.dart';
 import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
 
 class ProfileDialog extends ConsumerWidget {
@@ -97,7 +97,7 @@ class ProfileDialog extends ConsumerWidget {
                   ),
                   Column(
                     children: [
-                      const BackupListTile(),
+                      const ProfileDialogBackupListTile(),
                       ProfileDialogItem(
                         onTap: () {},
                         title: 'Share with a partner',
@@ -198,7 +198,7 @@ class ProfileDialogItem extends StatelessWidget {
                 ),
                 const Gap(12),
                 Expanded(
-                  child: isLoading ==false
+                  child: isLoading == false
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -215,7 +215,7 @@ class ProfileDialogItem extends StatelessWidget {
                           ],
                         )
                       : const Center(
-                          child: CircularProgressIndicator(),
+                          child: LinearProgressIndicator(),
                         ),
                 ),
               ],

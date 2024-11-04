@@ -10,11 +10,9 @@ import 'package:myapp/everyday/domain/use_cases/add_today.dart';
 import 'package:myapp/everyday/domain/use_cases/backup_everyday.dart';
 import 'package:myapp/everyday/domain/use_cases/delete_today.dart';
 import 'package:myapp/everyday/domain/use_cases/get_backup_progress.dart';
-import 'package:myapp/everyday/domain/use_cases/get_backup_status.dart';
 import 'package:myapp/everyday/domain/use_cases/read_everyday.dart';
-import 'package:myapp/everyday/domain/use_cases/save_backup_status.dart';
 import 'package:myapp/everyday/domain/use_cases/update_emails_previous_rows.dart';
-import 'package:myapp/everyday/presentation/providers/backup_provider.dart';
+import 'package:myapp/everyday/presentation/providers/backup_progress_provider.dart';
 
 class EverydayNotifier extends StateNotifier<List<Today>> {
   EverydayNotifier(
@@ -25,8 +23,6 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
     this._updateEmailsPreviousRowsUseCase,
     this._backupEverydayUseCase,
     this._backupProgressUseCase,
-    this._backupStatusUseCase,
-    this._saveBackupStatusUseCase,
   ) : super([]) {
     _backupProgressUseCase().listen((progress) {
       if (progress.justUploadedToday != null) {
@@ -35,7 +31,9 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
             .toList();
         state = [...stateWithoutAToday, progress.justUploadedToday!];
       }
-      ref.read(backupStateProvider.notifier).updateBackupProgress(progress);
+      ref
+          .read(backupProgressStateProvider.notifier)
+          .updateBackupProgress(progress);
     });
   }
 
@@ -47,8 +45,9 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
 
   final BackupEverydayUseCase _backupEverydayUseCase;
   final GetBackupProgressUseCase _backupProgressUseCase;
-  final GetBackupStatusUseCase _backupStatusUseCase;
-  final SaveBackupStatusUseCase _saveBackupStatusUseCase;
+
+  List<Today> get unBackedupTodays =>
+      state.where((today) => today.isBackedUp == false).toList();
 
   Future<void> addToday(String videoPath, String caption) async {
     final today = await _addTodayUseCase.call(videoPath, caption);
@@ -65,18 +64,12 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
     state = state.where((eachToday) => eachToday != today).toList();
   }
 
-  Future<void> uploadEveryday(String currentUserEmail) async {
-    await _backupEverydayUseCase.call(
-        state.where((today) => today.isBackedUp == false).toList(),
-        currentUserEmail);
-  }
-
-  Future<bool> getBackupStatus() async {
-    return await _backupStatusUseCase.call();
-  }
-
-  Future<void> saveBackupStatus(bool status) async {
-    await _saveBackupStatusUseCase.call(status);
+  Future<void> backupEveryday() async {
+    if (unBackedupTodays.isEmpty) {
+      return;
+    }
+    await _backupEverydayUseCase
+        .call(unBackedupTodays);
   }
 }
 
@@ -101,9 +94,10 @@ final everydayProvider = StateNotifierProvider<EverydayNotifier, List<Today>>(
       AuthRepositoryImpl(FirebaseAuth.instance),
       everydayRepoImpl,
     ),
-    BackupEverydayUseCase(everydayRepoImpl),
+    BackupEverydayUseCase(
+      everydayRepoImpl,
+      AuthRepositoryImpl(FirebaseAuth.instance),
+    ),
     GetBackupProgressUseCase(everydayRepoImpl),
-    GetBackupStatusUseCase(everydayRepoImpl),
-    SaveBackupStatusUseCase(everydayRepoImpl),
   ),
 );

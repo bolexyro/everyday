@@ -29,8 +29,7 @@ class _AllTodayGridViewState extends ConsumerState<AllTodayGridView> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0)
-          .add(const EdgeInsets.only(top: 8)),
+      padding: const EdgeInsets.only(top: 8),
       child: FutureBuilder<void>(
           future: getEverydayFuture,
           builder: (context, snapshot) {
