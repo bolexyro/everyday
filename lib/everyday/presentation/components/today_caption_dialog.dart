@@ -86,7 +86,7 @@ class _TodayCaptionDialogState extends ConsumerState<TodayCaptionDialog> {
 
                   await ref.read(everydayProvider.notifier).addToday(
                         widget.videoPath,
-                        _captionController.text,
+                        _captionController.text.trim(),
                       );
 
                   if (context.mounted) {

@@ -1,3 +1,4 @@
+import 'package:myapp/everyday/domain/entities/backup_progress.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
 //
 
@@ -24,9 +25,13 @@ abstract class EverydayRepository {
   Future<Today> addToday(
       String videoPath, String caption, String currentUserEmail);
   Future<List<Today>> readEveryday(String currentUserEmail);
-  Future<void> backupEveryday(List<Today> everyday);
+  Future<void> backupEveryday(List<Today> everyday, String currentUserEmail);
+  Stream<BackupProgress> get backupProgressStream;
+
   Future<void> deleteToday(String id, String videoPath);
   Future<void> updateEmailForPreviousRows(String email);
+  Future<void> saveBackupStatus(bool status);
+  Future<bool> getBackupStatus();
 }
 
 // NB ABOUT ABSTRACT CLASSES

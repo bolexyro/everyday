@@ -64,27 +64,12 @@ class AuthNotifier extends StateNotifier<AppAuthState> {
   }
 }
 
+final authRepo = AuthRepositoryImpl(FirebaseAuth.instance);
 final authProvider = StateNotifierProvider<AuthNotifier, AppAuthState>(
   (ref) => AuthNotifier(
-    LoginUseCase(
-      AuthRepositoryImpl(
-        FirebaseAuth.instance,
-      ),
-    ),
-    AuthStateChangeUseCase(
-      AuthRepositoryImpl(
-        FirebaseAuth.instance,
-      ),
-    ),
-    GetCurrentUserUseCase(
-      AuthRepositoryImpl(
-        FirebaseAuth.instance,
-      ),
-    ),
-    LogoutUseCase(
-      AuthRepositoryImpl(
-        FirebaseAuth.instance,
-      ),
-    ),
+    LoginUseCase(authRepo),
+    AuthStateChangeUseCase(authRepo),
+    GetCurrentUserUseCase(authRepo),
+    LogoutUseCase(authRepo),
   ),
 );

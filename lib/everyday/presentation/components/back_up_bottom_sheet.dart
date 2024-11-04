@@ -3,12 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:myapp/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/core/extensions.dart';
+import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
 
-class BackUpBottomSheet extends ConsumerWidget {
+class BackUpBottomSheet extends ConsumerStatefulWidget {
   const BackUpBottomSheet({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BackUpBottomSheet> createState() => _BackUpBottomSheetState();
+}
+
+class _BackUpBottomSheetState extends ConsumerState<BackUpBottomSheet> {
+  bool _isLoading = false;
+  @override
+  Widget build(BuildContext context) {
     final user = ref.read(authProvider).user!;
     return Padding(
       padding: const EdgeInsets.all(12),
@@ -16,9 +23,12 @@ class BackUpBottomSheet extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Row(),
-          SizedBox.square(
-            dimension: 160,
-            child: Image.asset('backup'.png),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: SizedBox.square(
+              dimension: 160,
+              child: Image.asset('backup'.png),
+            ),
           ),
           LayoutBuilder(
             builder: (context, constraints) {
@@ -62,8 +72,30 @@ class BackUpBottomSheet extends ConsumerWidget {
               const Gap(12),
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () {},
-                  child: const Text('Turn on backup'),
+                  onPressed: () async {
+                    context.navigator.pop();
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    await ref
+                        .read(everydayProvider.notifier)
+                        .saveBackupStatus(true);
+
+                    if (context.mounted) {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    }
+                    ref
+                        .read(everydayProvider.notifier)
+                        .uploadEveryday(ref.read(authProvider).user!.email);
+                  },
+                  child: _isLoading
+                      ? const SizedBox.square(
+                          dimension: 24,
+                          child: CircularProgressIndicator(),
+                        )
+                      : const Text('Turn on backup'),
                 ),
               ),
             ],

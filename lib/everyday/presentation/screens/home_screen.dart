@@ -26,6 +26,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(ref.read(authProvider).user!);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Everyday'),

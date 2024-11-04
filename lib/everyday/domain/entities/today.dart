@@ -30,9 +30,29 @@ class Today extends Equatable {
           localThumbnailPath: todayModel.localThumbnailPath,
           remoteThumbnailUrl: todayModel.remoteThumbnailUrl,
         );
-        
+
   bool get isAvailableLocal => localVideoPath != null;
   bool get isBackedUp => remoteVideoUrl != null;
+
+  Today copyWith({
+    String? id,
+    String? caption,
+    String? localVideoPath,
+    String? remoteVideoUrl,
+    DateTime? date,
+    String? localThumbnailPath,
+    String? remoteThumbnailUrl,
+  }) {
+    return Today(
+      id: id ?? this.id,
+      caption: caption ?? this.caption,
+      localVideoPath: localVideoPath ?? this.localVideoPath,
+      remoteVideoUrl: remoteVideoUrl ?? this.remoteVideoUrl,
+      date: date ?? this.date,
+      localThumbnailPath: localThumbnailPath ?? this.localThumbnailPath,
+      remoteThumbnailUrl: remoteThumbnailUrl ?? this.remoteThumbnailUrl,
+    );
+  }
 
   @override
   List<Object?> get props => [id];
