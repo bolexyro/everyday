@@ -27,4 +27,26 @@ class TodayModel {
       _$TodayModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$TodayModelToJson(this);
+
+  TodayModel copyWith({
+    String? id,
+    String? caption,
+    String? localVideoPath,
+    String? remoteVideoUrl,
+    DateTime? date,
+    String? localThumbnailPath,
+    String? remoteThumbnailUrl,
+    String? email,
+  }) {
+    return TodayModel(
+      id: id ?? this.id,
+      caption: caption ?? this.caption,
+      localVideoPath: localVideoPath ?? this.localVideoPath,
+      remoteVideoUrl: remoteVideoUrl ?? this.remoteVideoUrl,
+      date: date ?? this.date,
+      localThumbnailPath: localThumbnailPath ?? this.localThumbnailPath,
+      remoteThumbnailUrl: remoteThumbnailUrl ?? this.remoteThumbnailUrl,
+      email: email ?? this.email,
+    );
+  }
 }

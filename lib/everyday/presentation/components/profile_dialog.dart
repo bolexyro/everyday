@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:myapp/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/core/extensions.dart';
-import 'package:myapp/everyday/presentation/components/back_up_bottom_sheet.dart';
+import 'package:myapp/everyday/presentation/components/profile_dialog_backup_list_tile.dart';
 import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
 
 class ProfileDialog extends ConsumerWidget {
@@ -97,41 +97,21 @@ class ProfileDialog extends ConsumerWidget {
                   ),
                   Column(
                     children: [
-                      _DialogItem(
-                        onTap: () {},
-                        title: 'Backup is off',
-                        subTitle:
-                            'Keep your todays safe by backing them up to your everyday account',
-                        button: TextButton(
-                          onPressed: () => showModalBottomSheet(
-                            context: context,
-                            builder: (context) => const BackUpBottomSheet(),
-                            isScrollControlled: true,
-                            enableDrag: false,
-                            sheetAnimationStyle: AnimationStyle.noAnimation,
-                          ),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 0),
-                          ),
-                          child: const Text('Turn on backup'),
-                        ),
-                        icon: Icons.backup_outlined,
-                      ),
-                      // ListTile(),
-                      _DialogItem(
+                      const ProfileDialogBackupListTile(),
+                      ProfileDialogItem(
                         onTap: () {},
                         title: 'Share with a partner',
-                        icon: Icons.swap_horizontal_circle_outlined,
+                        icon: const Icon(Icons.swap_horizontal_circle_outlined),
                       ),
-                      _DialogItem(
+                      ProfileDialogItem(
                         onTap: () {},
                         title: 'Add another account',
-                        icon: Icons.person_add_alt_1_outlined,
+                        icon: const Icon(Icons.person_add_alt_1_outlined),
                       ),
-                      _DialogItem(
+                      ProfileDialogItem(
                         onTap: () => ref.read(authProvider.notifier).logout(),
                         title: 'Logout',
-                        icon: Icons.logout,
+                        icon: const Icon(Icons.logout),
                       ),
                       // const Gap(16),
                     ],
@@ -177,20 +157,23 @@ class ProfileDialog extends ConsumerWidget {
   }
 }
 
-class _DialogItem extends StatelessWidget {
-  const _DialogItem({
-    required this.onTap,
-    required this.title,
+class ProfileDialogItem extends StatelessWidget {
+  const ProfileDialogItem({
+    super.key,
+    this.onTap,
+    this.title,
     this.subTitle,
     required this.icon,
     this.button,
+    this.isLoading = false,
   });
 
-  final VoidCallback onTap;
-  final String title;
+  final VoidCallback? onTap;
+  final String? title;
   final String? subTitle;
   final Widget? button;
-  final IconData icon;
+  final Widget icon;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -210,26 +193,30 @@ class _DialogItem extends StatelessWidget {
                 SizedBox.square(
                   dimension: 40,
                   child: Center(
-                    child: Icon(icon),
+                    child: icon,
                   ),
                 ),
                 const Gap(12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: context.textTheme.titleMedium,
-                      ),
-                      if (subTitle != null)
-                        Text(
-                          subTitle!,
-                          style: context.textTheme.bodyMedium,
+                  child: isLoading == false
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              title!,
+                              style: context.textTheme.titleMedium,
+                            ),
+                            if (subTitle != null)
+                              Text(
+                                subTitle!,
+                                style: context.textTheme.bodyMedium,
+                              ),
+                            if (button != null) button!
+                          ],
+                        )
+                      : const Center(
+                          child: LinearProgressIndicator(),
                         ),
-                      if (button != null) button!
-                    ],
-                  ),
                 ),
               ],
             ),

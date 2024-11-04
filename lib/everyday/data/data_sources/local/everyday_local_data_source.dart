@@ -4,6 +4,7 @@ import 'package:myapp/core/resources/local_buckets.dart';
 import 'package:myapp/everyday/data/data_sources/local/everyday_db_helper.dart';
 import 'package:myapp/everyday/data/models/today_model.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:uuid/uuid.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -16,8 +17,18 @@ class EverydayLocalDataSource {
 
   EverydayLocalDataSource._internal();
 
-  Future<sql.Database?> get database async =>
-      await TodayDatabaseHelper().database;
+  final dbHelper = TodayDatabaseHelper();
+
+  Future<sql.Database?> get database async => await dbHelper.database;
+  SharedPreferencesWithCache? _prefsCache;
+
+  Future<SharedPreferencesWithCache> get prefsWithCache async {
+    _prefsCache ??= await SharedPreferencesWithCache.create(
+      cacheOptions:
+          const SharedPreferencesWithCacheOptions(allowList: {'backup'}),
+    );
+    return _prefsCache!;
+  }
 
   Future<TodayModel> insert(
       String videoPath, String caption, String currentUserEmail) async {
@@ -57,12 +68,13 @@ class EverydayLocalDataSource {
 
   Future<List<TodayModel>> readAll(String currentUserEmail) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(
+    final List<Map<String, dynamic>> rows = await db!.query(
       TodayDatabaseHelper.todayTable,
       where: '${TodayDatabaseHelper.columnEmail} = ?',
       whereArgs: [currentUserEmail],
     );
-    return List<TodayModel>.from(maps.map((map) {
+    print(rows);
+    return List<TodayModel>.from(rows.map((map) {
       return TodayModel.fromJson(map);
     }));
   }
@@ -77,6 +89,16 @@ class EverydayLocalDataSource {
     );
   }
 
+  Future<void> update(TodayModel today) async {
+    final db = await database;
+    await db!.update(
+      TodayDatabaseHelper.todayTable,
+      today.toJson(),
+      where: '${TodayDatabaseHelper.columnId} = ?',
+      whereArgs: [today.id],
+    );
+  }
+
   Future<void> updateEmailForPreviousRows(String currentUserEmail) async {
     final db = await database;
     db!.update(
@@ -85,5 +107,15 @@ class EverydayLocalDataSource {
       where: '${TodayDatabaseHelper.columnEmail} = ?',
       whereArgs: [''],
     );
+  }
+
+  Future<void> saveBackupStatus(bool status) async {
+    final prefs = await prefsWithCache;
+    await prefs.setBool('backup', status);
+  }
+
+  Future<bool> getBackupStatus() async {
+    final prefs = await prefsWithCache;
+    return prefs.getBool('backup') ?? false;
   }
 }
