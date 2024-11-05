@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:myapp/auth/presentation/providers/auth_provider.dart';
+import 'package:myapp/core/app_colors.dart';
+import 'package:myapp/core/components/others.dart';
 import 'package:myapp/core/extensions.dart';
+import 'package:myapp/core/resources/data_state.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -100,12 +103,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 _isAuthenticating = true;
                                 _controller.repeat();
                               });
-                              await ref.read(authProvider.notifier).login();
+                              final dataState =
+                                  await ref.read(authProvider.notifier).login();
                               setState(() {
                                 _isAuthenticating = false;
                                 _controller.stop();
                                 _controller.reset();
                               });
+                              if (dataState is DataException) {
+                                if (context.mounted) {
+                                  context.scaffoldMessenger
+                                      .showSnackBar(appSnackbar(
+                                    text: dataState.exceptionMessage ??
+                                        'An unexpected error occurred',
+                                    color: AppColors.error,
+                                    seconds: 3,
+                                  ));
+                                }
+                              }
                             },
                       icon: _isAuthenticating
                           ? SizedBox.square(

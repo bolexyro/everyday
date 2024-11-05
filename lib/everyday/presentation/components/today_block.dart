@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:myapp/core/components/others.dart';
 import 'package:myapp/core/extensions.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
 import 'package:myapp/everyday/presentation/screens/today_screen.dart';
@@ -31,14 +32,8 @@ class TodayBlock extends StatelessWidget {
       data: today,
       onDragStarted: () => onDragStartedOrEnded(true),
       onDragEnd: (draggableDetails) => onDragStartedOrEnded(false),
-      onDragCompleted: () => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Today has been added to the recycle bin'),
-          duration: const Duration(seconds: 1),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-      ),
+      onDragCompleted: () => context.scaffoldMessenger
+          .showSnackBar(appSnackbar(text:'Today has been added to the recycle bin')),
       child: GestureDetector(
         onTap: () =>
             context.navigator.push(context.route(TodayScreen(today: today))),

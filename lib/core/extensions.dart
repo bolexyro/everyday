@@ -10,6 +10,9 @@ extension BuildContextExtensions on BuildContext {
 
   MaterialPageRoute route(Widget route) =>
       MaterialPageRoute(builder: (context) => route);
+
+
+  ScaffoldMessengerState get scaffoldMessenger => ScaffoldMessenger.of(this);
 }
 
 extension DateTimeExtension on DateTime {

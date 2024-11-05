@@ -8,6 +8,7 @@ import 'package:myapp/auth/domain/usecases/get_current_user.dart';
 import 'package:myapp/auth/domain/usecases/login.dart';
 import 'package:myapp/auth/domain/usecases/logout.dart';
 import 'package:myapp/auth/presentation/screens/login_screen.dart';
+import 'package:myapp/core/resources/data_state.dart';
 import 'package:myapp/everyday/presentation/screens/home_screen.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -55,8 +56,8 @@ class AuthNotifier extends StateNotifier<AppAuthState> {
     }
   }
 
-  Future<void> login() async {
-    await _loginUseCase.call();
+  Future<DataState> login() async {
+    return await _loginUseCase.call();
   }
 
   Future<void> logout() async {

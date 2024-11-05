@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:myapp/auth/domain/auth_state.dart';
 import 'package:myapp/auth/domain/entity/user.dart';
 import 'package:myapp/auth/domain/repository/auth_repository.dart';
+import 'package:myapp/core/resources/data_state.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this.firebaseAuth) {
@@ -49,27 +51,36 @@ class AuthRepositoryImpl implements AuthRepository {
     }
     return AppUser(
       email: user.email!,
-      name: user.providerData.first.displayName ?? 'Bolexyro NAtions',
-      photoUrl: user.providerData.first.photoURL ??
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpt04Av779EWVHmAKPWu4X1fKJ3t8rQ__Ztw&s',
+      name: user.providerData.first.displayName!,
+      photoUrl: user.providerData.first.photoURL!,
     );
   }
 
   @override
-  Future<void> login() async {
-    final googleUser = await googleSignIn.signIn();
+  Future<DataState> login() async {
+    try {
+      // throw 'Bolexyro Nations';
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        return const DataException('An unknown error occurred');
+      }
 
-    if (googleUser == null) {
-      return;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      return const DataSuccess('Login success');
+    } on PlatformException catch (e) {
+      return DataException(e.code == 'network_error'
+          ? 'Please check your internet connection and try again'
+          : 'An unknown error occurred');
+    } catch (e) {
+      return const DataException('An unknown error occurred');
     }
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   @override
