@@ -58,9 +58,10 @@ class TodayBlock extends StatelessWidget {
                     ? CachedNetworkImage(
                         imageUrl: today.remoteThumbnailUrl!,
                         progressIndicatorBuilder:
-                            (context, url, downloadProgress) =>
-                                CircularProgressIndicator(
-                                    value: downloadProgress.progress),
+                            (context, url, downloadProgress) => Center(
+                          child: CircularProgressIndicator(
+                              value: downloadProgress.progress),
+                        ),
                         errorWidget: (context, url, error) =>
                             const Icon(Icons.wifi_off_outlined),
                       )

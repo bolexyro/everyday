@@ -1,10 +1,9 @@
 import 'package:myapp/everyday/domain/entities/backup_progress.dart';
-import 'package:myapp/everyday/domain/repository/everyday_repository.dart';
+import 'package:myapp/everyday/domain/repository/today_repository.dart';
 
 class GetBackupProgressUseCase {
-  const GetBackupProgressUseCase(this.everydayRepository);
-  final EverydayRepository everydayRepository;
+  const GetBackupProgressUseCase(this.todayRepository);
+  final TodayRepository todayRepository;
 
-  Stream<BackupProgress> call() => everydayRepository.backupProgressStream;
-  
+  Stream<BackupProgress> call() => todayRepository.backupProgressStream;
 }

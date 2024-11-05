@@ -2,30 +2,34 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
-class LocalBuckets {
-  static const thumbnails = 'thumbnails';
-  static const videos = 'videos';
-}
-
-class FilePathManager {
+class MediaStorageHelper {
   static const String _videoFolder = 'videos';
   static const String _thumbnailFolder = 'thumbnails';
 
-  static final FilePathManager _instance = FilePathManager._internal();
-  FilePathManager._internal();
-  factory FilePathManager() => _instance;
+  static final MediaStorageHelper _instance = MediaStorageHelper._internal();
+  MediaStorageHelper._internal();
+  factory MediaStorageHelper() => _instance;
 
   Future<Directory> get _appDirectory async =>
       await getApplicationDocumentsDirectory();
 
-  Future<String> getVideoPath(String videoId) async {
+  Future<String> getLocalVideoPath(String videoId) async {
     final directory = await _appDirectory;
     return '${directory.path}/$_videoFolder/$videoId.mp4';
   }
 
-  Future<String> getThumbnailPath(String thumbnailId) async {
+  Future<String> getLocalThumbnailPath(String thumbnailId) async {
     final directory = await _appDirectory;
     return '${directory.path}/$_thumbnailFolder/$thumbnailId.jpg';
+  }
+
+  String getVideoStorageRefPath(String videoId) {
+    // videofolder here is the same as videoBucket
+    return '$_videoFolder/$videoId.mp4';
+  }
+
+  String getThumbnailStorageRefPath(String thumbnailId) {
+    return '$_thumbnailFolder/$thumbnailId.jpg';
   }
 
   Future<File> createFile(String path) async {

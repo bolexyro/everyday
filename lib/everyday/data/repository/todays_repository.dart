@@ -3,17 +3,16 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:myapp/everyday/data/data_sources/local/everyday_local_data_source.dart';
+import 'package:myapp/core/resources/local_buckets.dart';
+import 'package:myapp/everyday/data/data_sources/local/today_local_data_source.dart';
 import 'package:myapp/everyday/data/models/today_model.dart';
 import 'package:myapp/everyday/domain/entities/backup_progress.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
-import 'package:myapp/everyday/domain/repository/everyday_repository.dart';
-import 'package:path/path.dart' as path;
+import 'package:myapp/everyday/domain/repository/today_repository.dart';
 
-class EverydayRepositoryImpl implements EverydayRepository {
-  EverydayRepositoryImpl(
-      this.localDataSource, this.remoteDb, this.remoteStorage);
-  final EverydayLocalDataSource localDataSource;
+class TodaysRepositoryImpl implements TodayRepository {
+  TodaysRepositoryImpl(this.localDataSource, this.remoteDb, this.remoteStorage);
+  final TodayLocalDataSource localDataSource;
   final FirebaseFirestore remoteDb;
   final FirebaseStorage remoteStorage;
 
@@ -34,7 +33,7 @@ class EverydayRepositoryImpl implements EverydayRepository {
   }
 
   @override
-  Future<List<Today>> readEveryday(currentUserEmail) async {
+  Future<List<Today>> readTodays(currentUserEmail) async {
     final allLocallyAvilableTodayModels =
         await localDataSource.readAll(currentUserEmail);
 
@@ -51,7 +50,7 @@ class EverydayRepositoryImpl implements EverydayRepository {
           .add(Today.fromModel(TodayModel.fromJson(docSnapshot.data())));
     }
 
-    final List<Today> allTodays = [];
+    final List<Today> allTodays = [...allLocallyAvilableTodayEntities];
 
     for (final cloudToday in allCloudStoredTodays) {
       // syncing is getting what is in cloud and making it available locally
@@ -74,9 +73,9 @@ class EverydayRepositoryImpl implements EverydayRepository {
       }
     }
 
-    allTodays.sort((a, b) => a.date.compareTo(b.date));
+    allTodays.sort((a, b) => b.date.compareTo(a.date));
 
-    return allLocallyAvilableTodayEntities..addAll(allTodays);
+    return allTodays;
   }
 
   @override
@@ -89,21 +88,18 @@ class EverydayRepositoryImpl implements EverydayRepository {
       _backupProgressController.stream;
 
   @override
-  Future<void> backupEveryday(everyday, currentUserEmail) async {
-    int total = everyday.length;
+  Future<void> backupTodays(todays, currentUserEmail) async {
+    int total = todays.length;
     int completed = 0;
     _backupProgressController.add(BackupProgress(uploaded: 0, total: total));
 
-    for (final today in everyday) {
+    for (final today in todays) {
       final storageRef = remoteStorage.ref();
-      final thumbnailsRef = storageRef.child('thumbnails');
-      final thumbnailExtension = path.extension(today.localThumbnailPath!);
-      final todayThumbnailRef =
-          thumbnailsRef.child("${today.id}$thumbnailExtension");
+      final todayThumbnailRef = storageRef
+          .child(MediaStorageHelper().getThumbnailStorageRefPath(today.id));
 
-      final videosRef = storageRef.child('vidoes');
-      final videoExtension = path.extension(today.localVideoPath!);
-      final todayVideoRef = videosRef.child('${today.id}$videoExtension');
+      final todayVideoRef = storageRef
+          .child(MediaStorageHelper().getVideoStorageRefPath(today.id));
 
       await todayThumbnailRef.putFile(File(today.localThumbnailPath!));
       await todayVideoRef.putFile(File(today.localVideoPath!));
@@ -147,5 +143,11 @@ class EverydayRepositoryImpl implements EverydayRepository {
   @override
   Future<void> saveBackupStatus(bool status) async {
     await localDataSource.saveBackupStatus(status);
+  }
+
+  @override
+  Future<void> downloadTodays() {
+    // TODO: implement downloadTodays
+    throw UnimplementedError();
   }
 }

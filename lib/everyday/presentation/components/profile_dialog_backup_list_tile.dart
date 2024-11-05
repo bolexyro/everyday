@@ -9,7 +9,7 @@ import 'package:myapp/everyday/presentation/components/back_up_bottom_sheet.dart
 import 'package:myapp/everyday/presentation/components/profile_dialog.dart';
 import 'package:myapp/everyday/presentation/providers/backup_progress_provider.dart';
 import 'package:myapp/everyday/presentation/providers/backup_on_off_status_provider.dart';
-import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
+import 'package:myapp/everyday/presentation/providers/today_provider.dart';
 import 'package:myapp/everyday/presentation/screens/backup_settings_screen.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
@@ -59,7 +59,7 @@ class _BackupListTileState extends ConsumerState<ProfileDialogBackupListTile> {
         return ProfileDialogItemBackingUp(
             backupProgressState: backupProgressState);
       }
-      final totalNumberofTodays = ref.read(everydayProvider);
+      final totalNumberofTodays = ref.read(todayProvider);
       final numberOfUnbackedupTodays = totalNumberofTodays
           .where((today) => today.isBackedUp == false)
           .length;
@@ -71,14 +71,14 @@ class _BackupListTileState extends ConsumerState<ProfileDialogBackupListTile> {
             ? totalNumberofTodays.isEmpty
                 ? 'Nothing to backup'
                 : numberOfUnbackedupTodays == 0
-                    ? 'Your everyday is backed up'
-                    : 'You have $numberOfUnbackedupTodays unbackedup todays'
+                    ? 'Your todays are backed up'
+                    : 'You have $numberOfUnbackedupTodays todays not backed up'
             : 'Keep your todays safe by backing them up to your everyday account',
         button: backupOnOffStatus.isOn && numberOfUnbackedupTodays == 0
             ? null
             : TextButton(
                 onPressed: () => backupOnOffStatus.isOn
-                    ? ref.read(everydayProvider.notifier).backupEveryday()
+                    ? ref.read(todayProvider.notifier).backupTodays()
                     : showModalBottomSheet(
                         context: context,
                         builder: (context) => const BackUpBottomSheet(),

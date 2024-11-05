@@ -4,7 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:myapp/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/core/extensions.dart';
 import 'package:myapp/everyday/presentation/components/profile_dialog_backup_list_tile.dart';
-import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
+import 'package:myapp/everyday/presentation/providers/today_provider.dart';
 
 class ProfileDialog extends ConsumerWidget {
   const ProfileDialog({super.key});
@@ -26,6 +26,7 @@ class ProfileDialog extends ConsumerWidget {
         dragDistance = 0;
       },
       child: AlertDialog(
+        backgroundColor: context.colorScheme.surfaceContainerHigh,
         contentPadding: const EdgeInsets.all(10),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -51,7 +52,7 @@ class ProfileDialog extends ConsumerWidget {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                color: context.colorScheme.surfaceContainerHigh,
+                color: context.colorScheme.surface,
               ),
               clipBehavior: Clip.hardEdge,
               child: Column(
@@ -83,9 +84,9 @@ class ProfileDialog extends ConsumerWidget {
                           ),
                         ),
                         const Gap(12),
-                        Text(ref.read(everydayProvider).length >= 100
+                        Text(ref.read(todayProvider).length >= 100
                             ? '100+'
-                            : ref.read(everydayProvider).length.toString())
+                            : ref.read(todayProvider).length.toString())
                       ],
                     ),
                   ),

@@ -3,25 +3,25 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myapp/auth/data/repository/auth_repository.dart';
-import 'package:myapp/everyday/data/data_sources/local/everyday_local_data_source.dart';
-import 'package:myapp/everyday/data/repository/everyday_repository.dart';
+import 'package:myapp/everyday/data/data_sources/local/today_local_data_source.dart';
+import 'package:myapp/everyday/data/repository/todays_repository.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
 import 'package:myapp/everyday/domain/use_cases/add_today.dart';
-import 'package:myapp/everyday/domain/use_cases/backup_everyday.dart';
+import 'package:myapp/everyday/domain/use_cases/backup_todays.dart';
 import 'package:myapp/everyday/domain/use_cases/delete_today.dart';
 import 'package:myapp/everyday/domain/use_cases/get_backup_progress.dart';
-import 'package:myapp/everyday/domain/use_cases/read_everyday.dart';
+import 'package:myapp/everyday/domain/use_cases/read_todays.dart';
 import 'package:myapp/everyday/domain/use_cases/update_emails_previous_rows.dart';
 import 'package:myapp/everyday/presentation/providers/backup_progress_provider.dart';
 
-class EverydayNotifier extends StateNotifier<List<Today>> {
-  EverydayNotifier(
+class TodayNotifier extends StateNotifier<List<Today>> {
+  TodayNotifier(
     this.ref,
     this._addTodayUseCase,
-    this._readEverydayUseCase,
+    this._readTodaysUseCase,
     this._deleteTodayUseCase,
     this._updateEmailsPreviousRowsUseCase,
-    this._backupEverydayUseCase,
+    this._backupTodaysUseCase,
     this._backupProgressUseCase,
   ) : super([]) {
     _backupProgressUseCase().listen((progress) {
@@ -39,11 +39,11 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
 
   final Ref ref;
   final AddTodayUseCase _addTodayUseCase;
-  final ReadEverydayUseCase _readEverydayUseCase;
+  final ReadTodaysUseCase _readTodaysUseCase;
   final DeleteTodayUseCase _deleteTodayUseCase;
   final UpdateEmailsPreviousRowsUseCase _updateEmailsPreviousRowsUseCase;
 
-  final BackupEverydayUseCase _backupEverydayUseCase;
+  final BackupTodaysUseCase _backupTodaysUseCase;
   final GetBackupProgressUseCase _backupProgressUseCase;
 
   List<Today> get unBackedupTodays =>
@@ -51,12 +51,12 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
 
   Future<void> addToday(String videoPath, String caption) async {
     final today = await _addTodayUseCase.call(videoPath, caption);
-    state = [...state, today];
+    state = [today, ...state];
   }
 
-  Future<void> getEveryday() async {
+  Future<void> getTodays() async {
     await _updateEmailsPreviousRowsUseCase.call();
-    state = await _readEverydayUseCase.call();
+    state = await _readTodaysUseCase.call();
   }
 
   Future<void> deleteToday(Today today) async {
@@ -64,40 +64,39 @@ class EverydayNotifier extends StateNotifier<List<Today>> {
     state = state.where((eachToday) => eachToday != today).toList();
   }
 
-  Future<void> backupEveryday() async {
+  Future<void> backupTodays() async {
     if (unBackedupTodays.isEmpty) {
       return;
     }
-    await _backupEverydayUseCase
-        .call(unBackedupTodays);
+    await _backupTodaysUseCase.call(unBackedupTodays);
   }
 }
 
-final everydayRepoImpl = EverydayRepositoryImpl(
-  EverydayLocalDataSource(),
+final todayRepoImpl = TodaysRepositoryImpl(
+  TodayLocalDataSource(),
   FirebaseFirestore.instance,
   FirebaseStorage.instance,
 );
-final everydayProvider = StateNotifierProvider<EverydayNotifier, List<Today>>(
-  (ref) => EverydayNotifier(
+final todayProvider = StateNotifierProvider<TodayNotifier, List<Today>>(
+  (ref) => TodayNotifier(
     ref,
     AddTodayUseCase(
-      everydayRepoImpl,
+      todayRepoImpl,
       AuthRepositoryImpl(FirebaseAuth.instance),
     ),
-    ReadEverydayUseCase(
-      everydayRepoImpl,
+    ReadTodaysUseCase(
+      todayRepoImpl,
       AuthRepositoryImpl(FirebaseAuth.instance),
     ),
-    DeleteTodayUseCase(everydayRepoImpl),
+    DeleteTodayUseCase(todayRepoImpl),
     UpdateEmailsPreviousRowsUseCase(
       AuthRepositoryImpl(FirebaseAuth.instance),
-      everydayRepoImpl,
+      todayRepoImpl,
     ),
-    BackupEverydayUseCase(
-      everydayRepoImpl,
+    BackupTodaysUseCase(
+      todayRepoImpl,
       AuthRepositoryImpl(FirebaseAuth.instance),
     ),
-    GetBackupProgressUseCase(everydayRepoImpl),
+    GetBackupProgressUseCase(todayRepoImpl),
   ),
 );

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:myapp/core/extensions.dart';
-import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
+import 'package:myapp/everyday/presentation/providers/today_provider.dart';
 
 class TodayCaptionDialog extends ConsumerStatefulWidget {
   const TodayCaptionDialog({
@@ -84,7 +84,7 @@ class _TodayCaptionDialogState extends ConsumerState<TodayCaptionDialog> {
                     _isSaving = true;
                   });
 
-                  await ref.read(everydayProvider.notifier).addToday(
+                  await ref.read(todayProvider.notifier).addToday(
                         widget.videoPath,
                         _captionController.text.trim(),
                       );

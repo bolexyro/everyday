@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myapp/everyday/presentation/components/delete_today_drag_target.dart';
 import 'package:myapp/everyday/presentation/components/today_block.dart';
-import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
+import 'package:myapp/everyday/presentation/providers/today_provider.dart';
 
 class AllTodayGridView extends ConsumerStatefulWidget {
   const AllTodayGridView({
@@ -23,23 +23,22 @@ class _AllTodayGridViewState extends ConsumerState<AllTodayGridView> {
     setState(() => _isDeleteShowing = show);
   }
 
-  late Future getEverydayFuture =
-      ref.read(everydayProvider.notifier).getEveryday();
+  late Future getTodaysFuture = ref.read(todayProvider.notifier).getTodays();
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () =>
-          getEverydayFuture = ref.read(everydayProvider.notifier).getEveryday(),
+          getTodaysFuture = ref.read(todayProvider.notifier).getTodays(),
       child: Padding(
         padding: const EdgeInsets.only(top: 8),
         child: FutureBuilder<void>(
-            future: getEverydayFuture,
+            future: getTodaysFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               }
-              final everyday = ref.watch(everydayProvider);
+              final todays = ref.watch(todayProvider);
 
               return Stack(
                 alignment: Alignment.bottomCenter,
@@ -58,13 +57,13 @@ class _AllTodayGridViewState extends ConsumerState<AllTodayGridView> {
                       }
                       return false;
                     },
-                    child: everyday.isEmpty
+                    child: todays.isEmpty
                         ? const Center(child: Text('No todays yet'))
                         : GridView.count(
                             crossAxisCount: 2,
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 10,
-                            children: everyday
+                            children: todays
                                 .map((category) => TodayBlock(
                                       today: category,
                                       onDragStartedOrEnded: _showHideDelete,

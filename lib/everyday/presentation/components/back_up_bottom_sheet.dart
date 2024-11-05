@@ -4,7 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:myapp/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/core/extensions.dart';
 import 'package:myapp/everyday/presentation/providers/backup_on_off_status_provider.dart';
-import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
+import 'package:myapp/everyday/presentation/providers/today_provider.dart';
 
 class BackUpBottomSheet extends ConsumerStatefulWidget {
   const BackUpBottomSheet({super.key});
@@ -84,7 +84,7 @@ class _BackUpBottomSheetState extends ConsumerState<BackUpBottomSheet> {
                     setState(() {
                       _isLoading = false;
                     });
-                    ref.read(everydayProvider.notifier).backupEveryday();
+                    ref.read(todayProvider.notifier).backupTodays();
                     if (context.mounted) {
                       context.navigator.pop();
                     }

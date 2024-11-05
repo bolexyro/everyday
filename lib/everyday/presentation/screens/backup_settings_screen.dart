@@ -9,7 +9,7 @@ import 'package:myapp/core/components/app_scaffold.dart';
 import 'package:myapp/core/extensions.dart';
 import 'package:myapp/everyday/presentation/providers/backup_on_off_status_provider.dart';
 import 'package:myapp/everyday/presentation/providers/backup_progress_provider.dart';
-import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
+import 'package:myapp/everyday/presentation/providers/today_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class BackupSettingsScreen extends ConsumerWidget {
@@ -121,7 +121,7 @@ class _BackupListTileState extends ConsumerState<BackupListTile> {
   @override
   Widget build(BuildContext context) {
     final noTodaysNotBackedUp = ref
-        .watch(everydayProvider)
+        .watch(todayProvider)
         .where((today) => today.isBackedUp == false)
         .length;
     final backupOnOffStatus = ref.watch(backupOnOffStatusStateProvider);
@@ -162,8 +162,7 @@ class _BackupListTileState extends ConsumerState<BackupListTile> {
               !backupProgressState.isBackingUp &&
               noTodaysNotBackedUp > 0
           ? TextButton(
-              onPressed: () =>
-                  ref.read(everydayProvider.notifier).backupEveryday(),
+              onPressed: () => ref.read(todayProvider.notifier).backupTodays(),
               child: const Text('Backup'),
             )
           : const SizedBox(),

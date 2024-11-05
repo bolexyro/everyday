@@ -1,12 +1,11 @@
-import 'package:myapp/everyday/domain/repository/everyday_repository.dart';
+import 'package:myapp/everyday/domain/repository/today_repository.dart';
 
 class GetBackupStatusUseCase {
-  final EverydayRepository repository;
+  final TodayRepository todayRepository;
 
-  GetBackupStatusUseCase(this.repository);
+  GetBackupStatusUseCase(this.todayRepository);
 
   Future<bool> call() async {
-    return await repository.getBackupStatus();
+    return await todayRepository.getBackupStatus();
   }
 }
-

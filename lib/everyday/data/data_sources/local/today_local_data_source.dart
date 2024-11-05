@@ -1,20 +1,20 @@
 import 'dart:io';
 
 import 'package:myapp/core/resources/local_buckets.dart';
-import 'package:myapp/everyday/data/data_sources/local/everyday_db_helper.dart';
+import 'package:myapp/everyday/data/data_sources/local/today_db_helper.dart';
 import 'package:myapp/everyday/data/models/today_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:uuid/uuid.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
-class EverydayLocalDataSource {
-  static final EverydayLocalDataSource _instance =
-      EverydayLocalDataSource._internal();
+class TodayLocalDataSource {
+  static final TodayLocalDataSource _instance =
+      TodayLocalDataSource._internal();
 
-  factory EverydayLocalDataSource() => _instance;
+  factory TodayLocalDataSource() => _instance;
 
-  EverydayLocalDataSource._internal();
+  TodayLocalDataSource._internal();
 
   final dbHelper = TodayDatabaseHelper();
 
@@ -46,12 +46,12 @@ class EverydayLocalDataSource {
     );
 
     final savedVideoId = const Uuid().v4();
-    final savedVideoFile = await FilePathManager()
-        .createFile(await FilePathManager().getVideoPath(savedVideoId));
+    final savedVideoFile = await MediaStorageHelper()
+        .createFile(await MediaStorageHelper().getLocalVideoPath(savedVideoId));
     await File(videoPath).copy(savedVideoFile.path);
 
-    final savedThumbnailFile = await FilePathManager()
-        .createFile(await FilePathManager().getThumbnailPath(savedVideoId))
+    final savedThumbnailFile = await MediaStorageHelper().createFile(
+        await MediaStorageHelper().getLocalThumbnailPath(savedVideoId))
       ..writeAsBytes(uint8list!);
 
     final today = TodayModel(

@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:myapp/core/resources/local_buckets.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart' as path;
 import 'package:uuid/uuid.dart';
@@ -117,11 +115,9 @@ class TodayDatabaseHelper {
       final String id = row[columnId];
       final Uint8List blobData = row['thumbnail'];
 
-      final directory = await getApplicationDocumentsDirectory();
       final savedFileId = const Uuid().v4();
-      final savedFile = await File(
-              '${directory.path}/${LocalBuckets.thumbnails}/$savedFileId.jpg')
-          .create(recursive: true)
+      final savedFile = (await MediaStorageHelper().createFile(
+          await MediaStorageHelper().getLocalThumbnailPath(savedFileId)))
         ..writeAsBytes(blobData);
 
       await db.update(

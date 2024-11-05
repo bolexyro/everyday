@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myapp/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/core/components/app_scaffold.dart';
-import 'package:myapp/everyday/presentation/components/everyday_grid_view.dart';
+import 'package:myapp/everyday/presentation/components/todays_grid_view.dart';
 import 'package:myapp/everyday/presentation/components/profile_dialog.dart';
 import 'package:myapp/everyday/presentation/components/today_caption_dialog.dart';
 
@@ -32,6 +33,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: const Text('Everyday'),
         centerTitle: true,
         actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.offline_pin_outlined,
+            ),
+          ),
+          const Gap(12),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: GestureDetector(

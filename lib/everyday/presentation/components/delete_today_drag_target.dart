@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myapp/core/app_colors.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
-import 'package:myapp/everyday/presentation/providers/everyday_provider.dart';
+import 'package:myapp/everyday/presentation/providers/today_provider.dart';
 
 class DeleteTodayDragTarget extends ConsumerWidget {
   const DeleteTodayDragTarget({super.key});
@@ -22,7 +22,7 @@ class DeleteTodayDragTarget extends ConsumerWidget {
         );
       },
       onAcceptWithDetails: (details) {
-        ref.read(everydayProvider.notifier).deleteToday(details.data);
+        ref.read(todayProvider.notifier).deleteToday(details.data);
       },
     );
   }

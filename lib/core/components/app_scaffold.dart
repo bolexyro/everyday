@@ -6,14 +6,18 @@ class AppScaffold extends StatelessWidget {
     this.appBar,
     this.body,
     this.floatingActionButton,
+    this.extendBodyBehindAppBar = false,
   });
 
   final PreferredSizeWidget? appBar;
   final Widget? body;
   final Widget? floatingActionButton;
+  final bool extendBodyBehindAppBar; // extendBodyBehindAppBar: true,
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: extendBodyBehindAppBar,
       appBar: appBar,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
