@@ -26,14 +26,26 @@ class TodayBlock extends StatelessWidget {
         width: 80,
         height: 200,
         child: today.localThumbnailPath == null
-            ? Image.network(today.remoteThumbnailUrl!)
-            : Image.file(File(today.localThumbnailPath!)),
+            ? CachedNetworkImage(
+                imageUrl: today.remoteThumbnailUrl!,
+                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    Center(
+                  child: CircularProgressIndicator(
+                      value: downloadProgress.progress),
+                ),
+                errorWidget: (context, url, error) =>
+                    const Icon(Icons.wifi_off_outlined),
+              )
+            : Image.file(
+                File(today.localThumbnailPath!),
+                fit: BoxFit.fill,
+              ),
       ),
       data: today,
       onDragStarted: () => onDragStartedOrEnded(true),
       onDragEnd: (draggableDetails) => onDragStartedOrEnded(false),
-      onDragCompleted: () => context.scaffoldMessenger
-          .showSnackBar(appSnackbar(text:'Today has been added to the recycle bin')),
+      onDragCompleted: () => context.scaffoldMessenger.showSnackBar(
+          appSnackbar(text: 'Today has been added to the recycle bin')),
       child: GestureDetector(
         onTap: () =>
             context.navigator.push(context.route(TodayScreen(today: today))),

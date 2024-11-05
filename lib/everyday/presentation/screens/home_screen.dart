@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
@@ -49,8 +50,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               child: CircleAvatar(
                 radius: 15,
-                backgroundImage:
-                    NetworkImage(ref.read(authProvider).user!.photoUrl),
+                backgroundImage: CachedNetworkImageProvider(
+                    ref.read(authProvider).user!.photoUrl),
               ),
             ),
           ),

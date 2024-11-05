@@ -62,7 +62,8 @@ class AuthRepositoryImpl implements AuthRepository {
       // throw 'Bolexyro Nations';
       final googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
-        return const DataException('An unknown error occurred');
+        return const DataException(
+            'An error occurred. Please check your internet connection and try again');
       }
 
       final GoogleSignInAuthentication googleAuth =

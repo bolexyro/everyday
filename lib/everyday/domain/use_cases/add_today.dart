@@ -1,4 +1,5 @@
 import 'package:myapp/auth/domain/repository/auth_repository.dart';
+import 'package:myapp/core/resources/data_state.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
 import 'package:myapp/everyday/domain/repository/today_repository.dart';
 
@@ -7,7 +8,7 @@ class AddTodayUseCase {
   final TodayRepository todayRepository;
   final AuthRepository authRepository;
 
-  Future<Today> call(String videoPath, String caption) {
+  Future<DataState<Today>> call(String videoPath, String caption) {
     final currentUser = authRepository.currentUser!;
     return todayRepository.addToday(videoPath, caption, currentUser.email);
   }

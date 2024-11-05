@@ -11,6 +11,12 @@ class DataSuccess<T> extends DataState<T> {
   const DataSuccess(T data) : super(data: data);
 }
 
-class DataException extends DataState {
-  const DataException(String exception) : super(exceptionMessage: exception);
+class DataException<T> extends DataState<T> {
+  const DataException(String exceptionMessage)
+      : super(exceptionMessage: exceptionMessage);
+}
+
+class DataSuccessWithException<T> extends DataState<T> {
+  const DataSuccessWithException(T data, String exceptionMessage)
+      : super(data: data, exceptionMessage: exceptionMessage);
 }

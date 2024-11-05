@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:myapp/core/extensions.dart';
+import 'package:myapp/core/resources/data_state.dart';
 import 'package:myapp/everyday/presentation/providers/today_provider.dart';
 
 class TodayCaptionDialog extends ConsumerStatefulWidget {
@@ -20,6 +21,8 @@ class _TodayCaptionDialogState extends ConsumerState<TodayCaptionDialog> {
   late final TextEditingController _captionController;
   late final DateTime _timeOfCreation;
   bool _isSaving = false;
+
+  String? _error;
 
   @override
   void initState() {
@@ -55,7 +58,11 @@ class _TodayCaptionDialogState extends ConsumerState<TodayCaptionDialog> {
             controller: _captionController,
             textCapitalization: TextCapitalization.words,
             autofocus: true,
-            decoration: const InputDecoration(border: OutlineInputBorder()),
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              errorText: _error,
+              errorMaxLines: 3,
+            ),
           ),
           const Gap(8),
           Row(
@@ -80,15 +87,25 @@ class _TodayCaptionDialogState extends ConsumerState<TodayCaptionDialog> {
           onPressed: _isSaving
               ? null
               : () async {
+                  FocusManager.instance.primaryFocus?.unfocus();
                   setState(() {
                     _isSaving = true;
+                    _error = null;
                   });
 
-                  await ref.read(todayProvider.notifier).addToday(
-                        widget.videoPath,
-                        _captionController.text.trim(),
-                      );
+                  final dataState =
+                      await ref.read(todayProvider.notifier).addToday(
+                            widget.videoPath,
+                            _captionController.text.trim(),
+                          );
 
+                  if (dataState is DataException) {
+                    setState(() {
+                      _isSaving = false;
+                      _error = dataState.exceptionMessage;
+                    }); 
+                    return;
+                  }
                   if (context.mounted) {
                     Navigator.of(context).pop();
                   }

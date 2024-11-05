@@ -1,3 +1,4 @@
+import 'package:myapp/core/resources/data_state.dart';
 import 'package:myapp/everyday/domain/entities/backup_progress.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
 //
@@ -22,9 +23,9 @@ import 'package:myapp/everyday/domain/entities/today.dart';
 // You don't need to know HOW they get the book, just that they can get it for you
 
 abstract class TodayRepository {
-  Future<Today> addToday(
+  Future<DataState<Today>> addToday(
       String videoPath, String caption, String currentUserEmail);
-  Future<List<Today>> readTodays(String currentUserEmail);
+  Future<DataState<List<Today>>> readTodays(String currentUserEmail);
   Future<void> backupTodays(List<Today> todays, String currentUserEmail);
   Stream<BackupProgress> get backupProgressStream;
 

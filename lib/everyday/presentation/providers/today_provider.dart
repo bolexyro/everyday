@@ -3,8 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myapp/auth/data/repository/auth_repository.dart';
+import 'package:myapp/core/resources/data_state.dart';
 import 'package:myapp/everyday/data/data_sources/local/today_local_data_source.dart';
-import 'package:myapp/everyday/data/repository/todays_repository.dart';
+import 'package:myapp/everyday/data/repository/today_repository.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
 import 'package:myapp/everyday/domain/use_cases/add_today.dart';
 import 'package:myapp/everyday/domain/use_cases/backup_todays.dart';
@@ -49,14 +50,25 @@ class TodayNotifier extends StateNotifier<List<Today>> {
   List<Today> get unBackedupTodays =>
       state.where((today) => today.isBackedUp == false).toList();
 
-  Future<void> addToday(String videoPath, String caption) async {
-    final today = await _addTodayUseCase.call(videoPath, caption);
-    state = [today, ...state];
+  Future<DataState> addToday(String videoPath, String caption) async {
+    final dataState = await _addTodayUseCase.call(videoPath, caption);
+    if (dataState is DataSuccess) {
+      state = [dataState.data!, ...state];
+    }
+    return dataState;
   }
 
-  Future<void> getTodays() async {
+  Future<DataState<List<Today>>> getTodays() async {
     await _updateEmailsPreviousRowsUseCase.call();
-    state = await _readTodaysUseCase.call();
+    final dataState = await _readTodaysUseCase.call();
+    if (dataState is DataSuccess<List<Today>> ||
+        dataState is DataSuccessWithException<List<Today>>) {
+      state = dataState.data!;
+    } else {
+      state = [];
+    }
+
+    return dataState;
   }
 
   Future<void> deleteToday(Today today) async {
@@ -72,7 +84,7 @@ class TodayNotifier extends StateNotifier<List<Today>> {
   }
 }
 
-final todayRepoImpl = TodaysRepositoryImpl(
+final todayRepoImpl = TodayRepositoryImpl(
   TodayLocalDataSource(),
   FirebaseFirestore.instance,
   FirebaseStorage.instance,
