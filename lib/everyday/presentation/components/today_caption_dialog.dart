@@ -103,7 +103,7 @@ class _TodayCaptionDialogState extends ConsumerState<TodayCaptionDialog> {
                     setState(() {
                       _isSaving = false;
                       _error = dataState.exceptionMessage;
-                    }); 
+                    });
                     return;
                   }
                   if (context.mounted) {

@@ -56,7 +56,7 @@ class AuthNotifier extends StateNotifier<AppAuthState> {
     }
   }
 
-  Future<DataState> login() async {
+  Future<DataState?> login() async {
     return await _loginUseCase.call();
   }
 

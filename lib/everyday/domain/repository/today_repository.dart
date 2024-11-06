@@ -31,8 +31,8 @@ abstract class TodayRepository {
 
   Future<void> deleteToday(String id, String videoPath);
   Future<void> updateEmailForPreviousRows(String email);
-  Future<void> saveBackupStatus(bool status);
-  Future<bool> getBackupStatus();
+  Future<void> saveBackupStatus(bool status, String currentUserEmail);
+  Future<bool> getBackupStatus(String currentUserEmail);
 
   Future<void> downloadTodays();
 }

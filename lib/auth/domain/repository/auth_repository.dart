@@ -4,7 +4,7 @@ import 'package:myapp/core/resources/data_state.dart';
 
 abstract class AuthRepository {
   Stream<AppAuthState> get authStateChanges;
-  Future<DataState> login();
+  Future<DataState?> login();
   Future<void> logout();
   AppUser? get currentUser;
 }

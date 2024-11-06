@@ -5,7 +5,7 @@ class LoginUseCase {
   const LoginUseCase(this.authRepository);
   final AuthRepository authRepository;
 
-  Future<DataState> call() async {
+  Future<DataState?> call() async {
     return await authRepository.login();
   }
 }

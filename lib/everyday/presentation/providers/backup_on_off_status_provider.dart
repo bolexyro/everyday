@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myapp/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/everyday/domain/use_cases/get_backup_status.dart';
 import 'package:myapp/everyday/domain/use_cases/save_backup_status.dart';
 import 'package:myapp/everyday/presentation/providers/today_provider.dart';
@@ -36,6 +37,6 @@ class BackupOnOffStatusNotifier extends StateNotifier<BackupOnOffStatus> {
 final backupOnOffStatusStateProvider =
     StateNotifierProvider<BackupOnOffStatusNotifier, BackupOnOffStatus>(
         (ref) => BackupOnOffStatusNotifier(
-              GetBackupStatusUseCase(todayRepoImpl),
-              SaveBackupStatusUseCase(todayRepoImpl),
+              GetBackupStatusUseCase(todayRepoImpl, authRepo),
+              SaveBackupStatusUseCase(todayRepoImpl, authRepo),
             ));

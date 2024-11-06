@@ -130,7 +130,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                     .animate(_controller),
                                 child: Image.asset(
                                   'everyday_logo'.png,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 ),
                               ),
                             )

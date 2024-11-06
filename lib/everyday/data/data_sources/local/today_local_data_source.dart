@@ -21,10 +21,17 @@ class TodayLocalDataSource {
   Future<sql.Database?> get database async => await dbHelper.database;
   SharedPreferencesWithCache? _prefsCache;
 
-  Future<SharedPreferencesWithCache> get prefsWithCache async {
+  String? lastEmailThatAccessedPrefs;
+  Future<SharedPreferencesWithCache> prefsWithCache(
+      String currentUserEmail) async {
+    if (lastEmailThatAccessedPrefs != currentUserEmail) {
+      _prefsCache = null;
+    }
+    lastEmailThatAccessedPrefs = currentUserEmail;
+
     _prefsCache ??= await SharedPreferencesWithCache.create(
-      cacheOptions:
-          const SharedPreferencesWithCacheOptions(allowList: {'backup'}),
+      cacheOptions: SharedPreferencesWithCacheOptions(
+          allowList: {'${currentUserEmail}backup'}),
     );
     return _prefsCache!;
   }
@@ -110,13 +117,13 @@ class TodayLocalDataSource {
     );
   }
 
-  Future<void> saveBackupStatus(bool status) async {
-    final prefs = await prefsWithCache;
-    await prefs.setBool('backup', status);
+  Future<void> saveBackupStatus(bool status, String currentUserEmail) async {
+    final prefs = await prefsWithCache(currentUserEmail);
+    await prefs.setBool('${currentUserEmail}backup', status);
   }
 
-  Future<bool> getBackupStatus() async {
-    final prefs = await prefsWithCache;
-    return prefs.getBool('backup') ?? false;
+  Future<bool> getBackupStatus(currentUserEmail) async {
+    final prefs = await prefsWithCache(currentUserEmail);
+    return prefs.getBool('${currentUserEmail}backup') ?? false;
   }
 }

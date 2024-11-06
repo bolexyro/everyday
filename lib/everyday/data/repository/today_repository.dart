@@ -148,13 +148,13 @@ class TodayRepositoryImpl implements TodayRepository {
   }
 
   @override
-  Future<bool> getBackupStatus() async {
-    return await localDataSource.getBackupStatus();
+  Future<bool> getBackupStatus(currentUserEmail) async {
+    return await localDataSource.getBackupStatus(currentUserEmail);
   }
 
   @override
-  Future<void> saveBackupStatus(bool status) async {
-    await localDataSource.saveBackupStatus(status);
+  Future<void> saveBackupStatus(status, currentUserEmail) async {
+    await localDataSource.saveBackupStatus(status, currentUserEmail);
   }
 
   @override

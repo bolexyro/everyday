@@ -57,13 +57,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<DataState> login() async {
+  Future<DataState?> login() async {
     try {
       // throw 'Bolexyro Nations';
       final googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
-        return const DataException(
-            'An error occurred. Please check your internet connection and try again');
+        return null;
       }
 
       final GoogleSignInAuthentication googleAuth =
