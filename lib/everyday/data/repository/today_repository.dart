@@ -85,6 +85,7 @@ class TodayRepositoryImpl implements TodayRepository {
 
       return DataSuccess(allTodays);
     } catch (e) {
+      allLocallyAvilableTodayEntities.sort((a, b) => b.date.compareTo(a.date));
       return DataSuccessWithException(allLocallyAvilableTodayEntities,
           'Check your internet connection and refresh');
     }

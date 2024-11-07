@@ -44,6 +44,30 @@ class _TodayCaptionDialogState extends ConsumerState<TodayCaptionDialog> {
     super.dispose();
   }
 
+  void _addToday() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() {
+      _isSaving = true;
+      _error = null;
+    });
+
+    final dataState = await ref.read(todayProvider.notifier).addToday(
+          widget.videoPath,
+          _captionController.text.trim(),
+        );
+
+    if (dataState is DataException) {
+      setState(() {
+        _isSaving = false;
+        _error = dataState.exceptionMessage;
+      });
+      return;
+    }
+    if (context.mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -55,8 +79,10 @@ class _TodayCaptionDialogState extends ConsumerState<TodayCaptionDialog> {
           Text('Caption your day', style: context.textTheme.titleMedium),
           const Gap(12),
           TextField(
+            onSubmitted: (value) => _addToday(),
             controller: _captionController,
             textCapitalization: TextCapitalization.words,
+            textInputAction: TextInputAction.done,
             autofocus: true,
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
@@ -84,32 +110,7 @@ class _TodayCaptionDialogState extends ConsumerState<TodayCaptionDialog> {
           child: const Text('Cancel'),
         ),
         TextButton(
-          onPressed: _isSaving
-              ? null
-              : () async {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                  setState(() {
-                    _isSaving = true;
-                    _error = null;
-                  });
-
-                  final dataState =
-                      await ref.read(todayProvider.notifier).addToday(
-                            widget.videoPath,
-                            _captionController.text.trim(),
-                          );
-
-                  if (dataState is DataException) {
-                    setState(() {
-                      _isSaving = false;
-                      _error = dataState.exceptionMessage;
-                    });
-                    return;
-                  }
-                  if (context.mounted) {
-                    Navigator.of(context).pop();
-                  }
-                },
+          onPressed: _isSaving ? null : _addToday,
           child: _isSaving
               ? const SizedBox.square(
                   dimension: 24,

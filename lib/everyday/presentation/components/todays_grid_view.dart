@@ -28,23 +28,29 @@ class _AllTodayGridViewState extends ConsumerState<AllTodayGridView> {
     setState(() => _isDeleteShowing = show);
   }
 
+  _showSnackBarAfterBuild() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.scaffoldMessenger.showSnackBar(appSnackbar(
+          text: 'Check your internet connection to sync your data, and refresh',
+          color: AppColors.error));
+    });
+  }
+
   late Future<DataState<List<Today>>> getTodaysFuture =
       ref.read(todayProvider.notifier).getTodays()
         ..then((dataState) {
           if (dataState is DataSuccessWithException<List<Today>>) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              context.scaffoldMessenger.showSnackBar(appSnackbar(
-                  text: 'Check your internet connection to sync your data',
-                  color: AppColors.error));
-            });
+            if (context.mounted) {
+              _showSnackBarAfterBuild();
+            }
           }
         });
 
-  @override
-  void initState() {
-    // getTodaysFuture =
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   // getTodaysFuture =
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +59,7 @@ class _AllTodayGridViewState extends ConsumerState<AllTodayGridView> {
           getTodaysFuture = ref.read(todayProvider.notifier).getTodays()
             ..then((dataState) {
               if (dataState is DataSuccessWithException<List<Today>>) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  context.scaffoldMessenger.showSnackBar(appSnackbar(
-                      text: 'Check your internet connection to sync your data',
-                      color: AppColors.error));
-                });
+                _showSnackBarAfterBuild();
               }
             }),
       child: Padding(
