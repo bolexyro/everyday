@@ -6,7 +6,7 @@ import 'package:myapp/everyday/data/models/today_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:uuid/uuid.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:video_compress/video_compress.dart';
 
 class TodayLocalDataSource {
   static final TodayLocalDataSource _instance =
@@ -46,20 +46,20 @@ class TodayLocalDataSource {
       await db!.insert(TodayDatabaseHelper.todayTable, todayParam.toJson());
       return todayParam;
     }
-    final uint8list = await VideoThumbnail.thumbnailData(
-      video: videoPath,
-      imageFormat: ImageFormat.JPEG,
-      quality: 25,
-    );
 
     final savedVideoId = const Uuid().v4();
     final savedVideoFile = await MediaStorageHelper()
         .createFile(await MediaStorageHelper().getLocalVideoPath(savedVideoId));
     await File(videoPath).copy(savedVideoFile.path);
 
-    final savedThumbnailFile = await MediaStorageHelper().createFile(
-        await MediaStorageHelper().getLocalThumbnailPath(savedVideoId))
-      ..writeAsBytes(uint8list!);
+    final savedThumbnailFile = await VideoCompress.getFileThumbnail(
+      videoPath,
+    );
+    await File(savedThumbnailFile.path).copy(
+      (await MediaStorageHelper().createFile(
+              await MediaStorageHelper().getLocalThumbnailPath(savedVideoId)))
+          .path,
+    );
 
     final today = TodayModel(
       id: savedVideoId,
