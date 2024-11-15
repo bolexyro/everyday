@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:myapp/core/app_colors.dart';
 import 'package:myapp/core/components/others.dart';
 import 'package:myapp/core/extensions.dart';
+import 'package:myapp/core/internet_connection/connection_status.dart';
 import 'package:myapp/everyday/domain/entities/today.dart';
 import 'package:myapp/everyday/presentation/screens/today_screen.dart';
 
@@ -47,8 +49,16 @@ class TodayBlock extends StatelessWidget {
       onDragCompleted: () => context.scaffoldMessenger.showSnackBar(
           appSnackbar(text: 'Today has been added to the recycle bin')),
       child: GestureDetector(
-        onTap: () =>
-            context.navigator.push(context.route(TodayScreen(today: today))),
+        onTap: () {
+          if (ConnectionStatusHelper.getInstance().hasInternetConnection || today.isAvailableLocal) {
+            context.navigator.push(context.route(TodayScreen(today: today)));
+          } else {
+            context.scaffoldMessenger.showSnackBar(appSnackbar(
+              text: 'You don\'t have this video available offline. Connect to the internet and try again',
+              color: AppColors.error,
+            ));
+          }
+        },
         child: Container(
           clipBehavior: Clip.hardEdge,
           alignment: Alignment.bottomCenter,

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:myapp/core/internet_connection/connection_status.dart';
 import 'package:myapp/core/resources/data_state.dart';
 import 'package:myapp/core/resources/local_buckets.dart';
 import 'package:myapp/everyday/data/data_sources/local/today_local_data_source.dart';
@@ -27,8 +28,7 @@ class TodayRepositoryImpl implements TodayRepository {
           await localDataSource.insert(videoPath, caption, currentUserEmail);
       return DataSuccess(Today.fromModel(savedTodayModel));
     } catch (e) {
-      return const DataException(
-          'An unexpected error occurred. Try creating it again, and it should work');
+      return DataException(e.toString());
     }
   }
 
@@ -40,14 +40,21 @@ class TodayRepositoryImpl implements TodayRepository {
 
   @override
   Future<DataState<List<Today>>> readTodays(currentUserEmail) async {
-    final allLocallyAvilableTodayModels =
-        await localDataSource.readAll(currentUserEmail);
-
-    final allLocallyAvilableTodayEntities = allLocallyAvilableTodayModels
-        .map((todayModel) => Today.fromModel(todayModel))
-        .toList();
-
     try {
+      final allLocallyAvilableTodayModels =
+          await localDataSource.readAll(currentUserEmail);
+
+      final allLocallyAvilableTodayEntities = allLocallyAvilableTodayModels
+          .map((todayModel) => Today.fromModel(todayModel))
+          .toList();
+
+      if (!ConnectionStatusHelper.getInstance().hasInternetConnection) {
+        allLocallyAvilableTodayEntities
+            .sort((a, b) => b.date.compareTo(a.date));
+
+        return DataSuccessWithException(allLocallyAvilableTodayEntities,
+            'Check your internet connection and refresh');
+      }
       final List<Today> allCloudStoredTodays = [];
       final querySnapshot = await remoteDb
           .collection("everyday")
@@ -85,9 +92,8 @@ class TodayRepositoryImpl implements TodayRepository {
 
       return DataSuccess(allTodays);
     } catch (e) {
-      allLocallyAvilableTodayEntities.sort((a, b) => b.date.compareTo(a.date));
-      return DataSuccessWithException(allLocallyAvilableTodayEntities,
-          'Check your internet connection and refresh');
+      return const DataSuccessWithException(
+          [], 'An unexpected error occurred. Close and open the app.');
     }
   }
 
