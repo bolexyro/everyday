@@ -6,7 +6,6 @@ import 'package:myapp/core/components/others.dart';
 import 'package:myapp/core/extensions.dart';
 import 'package:myapp/core/resources/data_state.dart';
 import 'package:myapp/features/everyday/domain/entities/today.dart';
-import 'package:myapp/features/everyday/presentation/components/delete_today_drag_target.dart';
 import 'package:myapp/features/everyday/presentation/components/today_block.dart';
 import 'package:myapp/features/everyday/presentation/providers/today_provider.dart';
 
@@ -22,11 +21,11 @@ class AllTodayGridView extends ConsumerStatefulWidget {
 }
 
 class _AllTodayGridViewState extends ConsumerState<AllTodayGridView> {
-  bool _isDeleteShowing = false;
+  // bool _isDeleteShowing = false;
 
-  void _showHideDelete([bool show = true]) {
-    setState(() => _isDeleteShowing = show);
-  }
+  // void _showHideDelete([bool show = true]) {
+  //   setState(() => _isDeleteShowing = show);
+  // }
 
   _showSnackBarAfterBuild() {
     if (mounted) {
@@ -102,12 +101,12 @@ class _AllTodayGridViewState extends ConsumerState<AllTodayGridView> {
                             children: todays
                                 .map((category) => TodayBlock(
                                       today: category,
-                                      onDragStartedOrEnded: _showHideDelete,
+                                      // onDragStartedOrEnded: _showHideDelete,
                                     ))
                                 .toList(),
                           ),
                   ),
-                  if (_isDeleteShowing) const DeleteTodayDragTarget()
+                  // if (_isDeleteShowing) const DeleteTodayDragTarget()
                 ],
               );
             }),
