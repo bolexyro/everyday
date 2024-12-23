@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:myapp/core/components/others.dart';
+import 'package:myapp/core/connection_checker/presentation/providers/connection_provider.dart';
 import 'package:myapp/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/core/app_colors.dart';
 import 'package:myapp/core/components/app_scaffold.dart';
@@ -106,7 +108,7 @@ class BackupListTile extends ConsumerStatefulWidget {
 }
 
 class _BackupListTileState extends ConsumerState<BackupListTile> {
-  late final bool _autoRetryBackupIsOn =
+  late bool _autoRetryBackupIsOn =
       ref.read(todayProvider.notifier).isAutoRetryBackupOn;
 
   @override
@@ -145,52 +147,52 @@ class _BackupListTileState extends ConsumerState<BackupListTile> {
               backupProgressState is! BackupInProgress &&
               noTodaysNotBackedUp > 0
           ? TextButton(
-              onPressed: () => ref.read(todayProvider.notifier).backupTodays(),
+              // onPressed: () => ref.read(todayProvider.notifier).backupTodays(),
 
-              // onPressed: _autoRetryBackupIsOn
-              //     ? () {
-              //         context.scaffoldMessenger.showSnackBar(
-              //           appSnackbar(
-              //             text:
-              //                 'Are you sure you want to turn off auto retry backup?',
-              //             action: SnackBarAction(
-              //               label: 'Turn off',
-              //               onPressed: () {
-              //                 setState(() {
-              //                   _autoRetryBackupIsOn = false;
-              //                 });
-              //                 ref.read(todayProvider.notifier).autoRetryBackup =
-              //                     false;
-              //               },
-              //             ),
-              //           ),
-              //         );
-              //       }
-              //     : () {
-              //         if (ref.read(connectionProvider).isConnected) {
-              //           ref.read(todayProvider.notifier).backupTodays();
-              //         } else {
-              //           context.scaffoldMessenger.showSnackBar(
-              //             appSnackbar(
-              //               text:
-              //                   'You\'re currently not connected to the interenet. Backup couldn\'t be started',
-              //               color: AppColors.error,
-              //               action: SnackBarAction(
-              //                 label: 'Enable auto retry',
-              //                 backgroundColor: Colors.white,
-              //                 onPressed: () {
-              //                   setState(() {
-              //                     _autoRetryBackupIsOn = true;
-              //                   });
-              //                   ref
-              //                       .read(todayProvider.notifier)
-              //                       .autoRetryBackup = true;
-              //                 },
-              //               ),
-              //             ),
-              //           );
-              //         }
-              //       },
+              onPressed: _autoRetryBackupIsOn
+                  ? () {
+                      context.scaffoldMessenger.showSnackBar(
+                        appSnackbar(
+                          text:
+                              'Are you sure you want to turn off auto retry backup?',
+                          action: SnackBarAction(
+                            label: 'Turn off',
+                            onPressed: () {
+                              setState(() {
+                                _autoRetryBackupIsOn = false;
+                              });
+                              ref.read(todayProvider.notifier).autoRetryBackup =
+                                  false;
+                            },
+                          ),
+                        ),
+                      );
+                    }
+                  : () {
+                      if (ref.read(connectionProvider).isConnected) {
+                        ref.read(todayProvider.notifier).backupTodays();
+                      } else {
+                        context.scaffoldMessenger.showSnackBar(
+                          appSnackbar(
+                            text:
+                                'You\'re currently not connected to the interenet. Backup couldn\'t be started',
+                            color: AppColors.error,
+                            action: SnackBarAction(
+                              label: 'Enable auto retry',
+                              backgroundColor: Colors.white,
+                              onPressed: () {
+                                setState(() {
+                                  _autoRetryBackupIsOn = true;
+                                });
+                                ref
+                                    .read(todayProvider.notifier)
+                                    .autoRetryBackup = true;
+                              },
+                            ),
+                          ),
+                        );
+                      }
+                    },
               child: Text(_autoRetryBackupIsOn ? 'Auto retry on' : 'Backup'),
             )
           : const SizedBox(),
