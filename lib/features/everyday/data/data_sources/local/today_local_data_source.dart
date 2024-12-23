@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:myapp/core/resources/local_buckets.dart';
-import 'package:myapp/features/everyday/data/data_sources/local/today_db_helper.dart';
+import 'package:myapp/features/everyday/data/data_sources/local/today_db_setup.dart';
 import 'package:myapp/features/everyday/data/models/today_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart' as sql;
@@ -16,9 +16,9 @@ class TodayLocalDataSource {
 
   TodayLocalDataSource._internal();
 
-  final dbHelper = TodayDatabaseHelper();
+  final dbSetup = TodayDatabaseSetup();
 
-  Future<sql.Database?> get database async => await dbHelper.database;
+  Future<sql.Database?> get database async => await dbSetup.database;
   SharedPreferencesWithCache? _prefsCache;
 
   String? lastEmailThatAccessedPrefs;
@@ -43,7 +43,7 @@ class TodayLocalDataSource {
     if (todayParam != null) {
       final db = await database;
 
-      await db!.insert(TodayDatabaseHelper.todayTable, todayParam.toJson());
+      await db!.insert(TodayDatabaseSetup.todayTable, todayParam.toJson());
       return todayParam;
     }
 
@@ -72,15 +72,15 @@ class TodayLocalDataSource {
     );
 
     final db = await database;
-    await db!.insert(TodayDatabaseHelper.todayTable, today.toJson());
+    await db!.insert(TodayDatabaseSetup.todayTable, today.toJson());
     return today;
   }
 
   Future<List<TodayModel>> readAll(String currentUserEmail) async {
     final db = await database;
     final List<Map<String, dynamic>> rows = await db!.query(
-      TodayDatabaseHelper.todayTable,
-      where: '${TodayDatabaseHelper.columnEmail} = ?',
+      TodayDatabaseSetup.todayTable,
+      where: '${TodayDatabaseSetup.columnEmail} = ?',
       whereArgs: [currentUserEmail],
     );
     return List<TodayModel>.from(rows.map((map) {
@@ -92,8 +92,8 @@ class TodayLocalDataSource {
     final db = await database;
     await File(videoPath).delete();
     await db!.delete(
-      TodayDatabaseHelper.todayTable,
-      where: '${TodayDatabaseHelper.columnId} = ?',
+      TodayDatabaseSetup.todayTable,
+      where: '${TodayDatabaseSetup.columnId} = ?',
       whereArgs: [id],
     );
   }
@@ -101,9 +101,9 @@ class TodayLocalDataSource {
   Future<void> update(TodayModel today) async {
     final db = await database;
     await db!.update(
-      TodayDatabaseHelper.todayTable,
+      TodayDatabaseSetup.todayTable,
       today.toJson(),
-      where: '${TodayDatabaseHelper.columnId} = ?',
+      where: '${TodayDatabaseSetup.columnId} = ?',
       whereArgs: [today.id],
     );
   }
@@ -111,9 +111,9 @@ class TodayLocalDataSource {
   Future<void> updateEmailForPreviousRows(String currentUserEmail) async {
     final db = await database;
     db!.update(
-      TodayDatabaseHelper.todayTable,
-      {TodayDatabaseHelper.columnEmail: currentUserEmail},
-      where: '${TodayDatabaseHelper.columnEmail} = ?',
+      TodayDatabaseSetup.todayTable,
+      {TodayDatabaseSetup.columnEmail: currentUserEmail},
+      where: '${TodayDatabaseSetup.columnEmail} = ?',
       whereArgs: [''],
     );
   }

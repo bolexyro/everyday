@@ -33,6 +33,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       appBar: AppBar(
         title: const Text('Everyday'),
         centerTitle: true,
+        leading: const Text('Connecting....'),
         actions: [
           IconButton(
             onPressed: () {},
@@ -61,7 +62,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           final XFile? video =
-              await picker.pickVideo(source: ImageSource.camera);
+              await picker.pickVideo(source: ImageSource.gallery);
           if (video == null) {
             return;
           }

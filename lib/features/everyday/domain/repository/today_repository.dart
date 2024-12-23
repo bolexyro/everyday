@@ -25,7 +25,7 @@ import 'package:myapp/features/everyday/domain/entities/today.dart';
 abstract class TodayRepository {
   Future<DataState<Today>> addToday(
       String videoPath, String caption, String currentUserEmail);
-  Future<DataState<List<Today>>> readTodays(String currentUserEmail);
+  Future<DataState<List<Today>>> readTodays(String currentUserEmail, bool isConnected);
   Future<void> backupTodays(List<Today> todays, String currentUserEmail);
   Stream<BackupProgress> get backupProgressStream;
 

@@ -4,8 +4,8 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:myapp/core/components/app_scaffold.dart';
 import 'package:myapp/features/everyday/domain/entities/today.dart';
 
-class TodayScreen extends StatefulWidget {
-  const TodayScreen({
+class WatchTodayScreen extends StatefulWidget {
+  const WatchTodayScreen({
     super.key,
     required this.today,
   });
@@ -13,10 +13,10 @@ class TodayScreen extends StatefulWidget {
   final Today today;
 
   @override
-  State<TodayScreen> createState() => _TodayScreenState();
+  State<WatchTodayScreen> createState() => _WatchTodayScreenState();
 }
 
-class _TodayScreenState extends State<TodayScreen> {
+class _WatchTodayScreenState extends State<WatchTodayScreen> {
   late final Player player;
   late final VideoController controller;
 

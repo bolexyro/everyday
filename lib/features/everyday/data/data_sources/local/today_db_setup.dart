@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart' as path;
 import 'package:uuid/uuid.dart';
 
-class TodayDatabaseHelper {
+class TodayDatabaseSetup {
   static const _databaseName = "TodayDatabase.db";
   static const _databaseVersion = 5;
   static const todayTable = 'today';
@@ -19,11 +19,11 @@ class TodayDatabaseHelper {
   static const columnDate = 'date';
   static const columnEmail = 'email';
 
-  static final TodayDatabaseHelper _instance = TodayDatabaseHelper._internal();
+  static final TodayDatabaseSetup _instance = TodayDatabaseSetup._internal();
 
-  factory TodayDatabaseHelper() => _instance;
+  factory TodayDatabaseSetup() => _instance;
 
-  TodayDatabaseHelper._internal();
+  TodayDatabaseSetup._internal();
 
   static sql.Database? _database;
 

@@ -8,8 +8,8 @@ class ReadTodaysUseCase {
   final TodayRepository todayRepository;
   final AuthRepository authRepository;
 
-  Future<DataState<List<Today>>> call() {
+  Future<DataState<List<Today>>> call(bool isConnected) {
     final currentUser = authRepository.currentUser!;
-    return todayRepository.readTodays(currentUser.email);
+    return todayRepository.readTodays(currentUser.email, isConnected);
   }
 }

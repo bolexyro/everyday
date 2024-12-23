@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myapp/core/connection_checker/presentation/providers/connection_provider.dart';
+import 'package:myapp/core/extensions.dart';
 import 'package:myapp/features/auth/data/repository/auth_repository.dart';
 import 'package:myapp/core/resources/data_state.dart';
-import 'package:myapp/features/everyday/data/data_sources/local/today_local_data_source.dart';
 import 'package:myapp/features/everyday/data/repository/today_repository.dart';
 import 'package:myapp/features/everyday/domain/entities/today.dart';
 import 'package:myapp/features/everyday/domain/use_cases/add_today.dart';
@@ -14,6 +12,7 @@ import 'package:myapp/features/everyday/domain/use_cases/get_backup_progress.dar
 import 'package:myapp/features/everyday/domain/use_cases/read_todays.dart';
 import 'package:myapp/features/everyday/domain/use_cases/update_emails_previous_rows.dart';
 import 'package:myapp/features/everyday/presentation/providers/backup_progress_provider.dart';
+import 'package:myapp/service_locator.dart';
 
 class TodayNotifier extends StateNotifier<List<Today>> {
   TodayNotifier(
@@ -60,7 +59,8 @@ class TodayNotifier extends StateNotifier<List<Today>> {
 
   Future<DataState<List<Today>>> getTodays() async {
     await _updateEmailsPreviousRowsUseCase.call();
-    final dataState = await _readTodaysUseCase.call();
+    final dataState =
+        await _readTodaysUseCase.call(ref.read(connectionProvider).isConnected);
     if (dataState is DataSuccess<List<Today>> ||
         dataState is DataSuccessWithException<List<Today>>) {
       state = dataState.data!;
@@ -84,31 +84,30 @@ class TodayNotifier extends StateNotifier<List<Today>> {
   }
 }
 
-final todayRepoImpl = TodayRepositoryImpl(
-  TodayLocalDataSource(),
-  FirebaseFirestore.instance,
-  FirebaseStorage.instance,
-);
 final todayProvider = StateNotifierProvider<TodayNotifier, List<Today>>(
   (ref) => TodayNotifier(
     ref,
     AddTodayUseCase(
-      todayRepoImpl,
-      AuthRepositoryImpl(FirebaseAuth.instance),
+      getIt<TodayRepositoryImpl>(),
+      getIt<AuthRepositoryImpl>(),
     ),
     ReadTodaysUseCase(
-      todayRepoImpl,
-      AuthRepositoryImpl(FirebaseAuth.instance),
+      getIt<TodayRepositoryImpl>(),
+      getIt<AuthRepositoryImpl>(),
     ),
-    DeleteTodayUseCase(todayRepoImpl),
+    DeleteTodayUseCase(
+      getIt<TodayRepositoryImpl>(),
+    ),
     UpdateEmailsPreviousRowsUseCase(
-      AuthRepositoryImpl(FirebaseAuth.instance),
-      todayRepoImpl,
+      getIt<AuthRepositoryImpl>(),
+      getIt<TodayRepositoryImpl>(),
     ),
     BackupTodaysUseCase(
-      todayRepoImpl,
-      AuthRepositoryImpl(FirebaseAuth.instance),
+      getIt<TodayRepositoryImpl>(),
+      getIt<AuthRepositoryImpl>(),
     ),
-    GetBackupProgressUseCase(todayRepoImpl),
+    GetBackupProgressUseCase(
+      getIt<TodayRepositoryImpl>(),
+    ),
   ),
 );

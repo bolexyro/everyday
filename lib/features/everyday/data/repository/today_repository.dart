@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:myapp/core/internet_connection/connection_status.dart';
 import 'package:myapp/core/resources/data_state.dart';
 import 'package:myapp/core/resources/local_buckets.dart';
 import 'package:myapp/features/everyday/data/data_sources/local/today_local_data_source.dart';
@@ -39,7 +38,8 @@ class TodayRepositoryImpl implements TodayRepository {
   }
 
   @override
-  Future<DataState<List<Today>>> readTodays(currentUserEmail) async {
+  Future<DataState<List<Today>>> readTodays(
+      currentUserEmail, bool isConnected) async {
     try {
       final allLocallyAvilableTodayModels =
           await localDataSource.readAll(currentUserEmail);
@@ -48,7 +48,7 @@ class TodayRepositoryImpl implements TodayRepository {
           .map((todayModel) => Today.fromModel(todayModel))
           .toList();
 
-      if (!ConnectionStatusHelper.getInstance().hasInternetConnection) {
+      if (!isConnected) {
         allLocallyAvilableTodayEntities
             .sort((a, b) => b.date.compareTo(a.date));
 

@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myapp/features/auth/data/repository/auth_repository.dart';
@@ -10,6 +9,7 @@ import 'package:myapp/features/auth/domain/usecases/logout.dart';
 import 'package:myapp/features/auth/presentation/screens/login_screen.dart';
 import 'package:myapp/core/resources/data_state.dart';
 import 'package:myapp/features/everyday/presentation/screens/home_screen.dart';
+import 'package:myapp/service_locator.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -65,12 +65,11 @@ class AuthNotifier extends StateNotifier<AppAuthState> {
   }
 }
 
-final authRepo = AuthRepositoryImpl(FirebaseAuth.instance);
 final authProvider = StateNotifierProvider<AuthNotifier, AppAuthState>(
   (ref) => AuthNotifier(
-    LoginUseCase(authRepo),
-    AuthStateChangeUseCase(authRepo),
-    GetCurrentUserUseCase(authRepo),
-    LogoutUseCase(authRepo),
+    LoginUseCase(getIt<AuthRepositoryImpl>()),
+    AuthStateChangeUseCase(getIt<AuthRepositoryImpl>()),
+    GetCurrentUserUseCase(getIt<AuthRepositoryImpl>()),
+    LogoutUseCase(getIt<AuthRepositoryImpl>()),
   ),
 );

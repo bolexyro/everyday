@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:myapp/core/connection_checker/domain/entities/connection_status.dart';
 
 extension BuildContextExtensions on BuildContext {
   ColorScheme get colorScheme => Theme.of(this).colorScheme;
@@ -39,4 +40,8 @@ extension FileExtension on File {
     var i = (log(bytes) / log(1024)).floor();
     return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
   }
+}
+
+extension ConnectionStatusExtension on ConnectionStatus{
+  bool get isConnected => this == ConnectionStatus.connected;
 }
