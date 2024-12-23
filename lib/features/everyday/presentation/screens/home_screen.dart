@@ -33,7 +33,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       appBar: AppBar(
         title: const Text('Everyday'),
         centerTitle: true,
-        leading: const Text('Connecting....'),
         actions: [
           IconButton(
             onPressed: () {},

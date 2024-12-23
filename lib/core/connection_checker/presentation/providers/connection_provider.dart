@@ -17,6 +17,11 @@ class ConnectionNotifier extends StateNotifier<ConnectionStatus> {
 
   final GetConnectionStatusStreamUseCase _getConnectionStatusStreamUseCase;
   final GetConnectionStatusUseCase _getConnectionStatusUseCase;
+
+
+  Stream<ConnectionStatus> getConnectionStatusStream() {
+    return _getConnectionStatusStreamUseCase();
+  }
 }
 
 final connectionProvider =

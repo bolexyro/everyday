@@ -5,10 +5,11 @@ import 'package:myapp/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/core/app_colors.dart';
 import 'package:myapp/core/components/app_scaffold.dart';
 import 'package:myapp/core/extensions.dart';
+import 'package:myapp/features/everyday/domain/entities/backup_progress.dart';
 import 'package:myapp/features/everyday/presentation/components/backup_fours.dart';
 import 'package:myapp/features/everyday/presentation/components/backup_indicator_icon.dart';
 import 'package:myapp/features/everyday/presentation/providers/backup_on_off_status_provider.dart';
-import 'package:myapp/features/everyday/presentation/providers/backup_progress_provider.dart';
+import 'package:myapp/features/everyday/presentation/providers/backup_state_provider.dart';
 import 'package:myapp/features/everyday/presentation/providers/today_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
@@ -85,7 +86,11 @@ class BackupSettingsScreen extends ConsumerWidget {
                   const Gap(16),
                   const BackupListTile(),
                   const Gap(16),
-                  const BackupFours()
+                  if (ref.watch(backupProgressStateProvider)
+                          is BackupInProgress ||
+                      ref.watch(backupProgressStateProvider)
+                          is BackupPausedDueToNoInternet)
+                    const BackupFours()
                 ],
               ),
             ),
@@ -93,11 +98,19 @@ class BackupSettingsScreen extends ConsumerWidget {
   }
 }
 
-class BackupListTile extends ConsumerWidget {
+class BackupListTile extends ConsumerStatefulWidget {
   const BackupListTile({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BackupListTile> createState() => _BackupListTileState();
+}
+
+class _BackupListTileState extends ConsumerState<BackupListTile> {
+  late final bool _autoRetryBackupIsOn =
+      ref.read(todayProvider.notifier).isAutoRetryBackupOn;
+
+  @override
+  Widget build(BuildContext context) {
     final noTodaysNotBackedUp = ref
         .watch(todayProvider)
         .where((today) => today.isBackedUp == false)
@@ -106,7 +119,7 @@ class BackupListTile extends ConsumerWidget {
     final backupProgressState = ref.watch(backupProgressStateProvider);
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: backupProgressState.isBackingUp
+      leading: backupProgressState is BackupInProgress
           ? CircularPercentIndicator(
               radius: 12.0,
               lineWidth: 2.0,
@@ -120,20 +133,65 @@ class BackupListTile extends ConsumerWidget {
                   Icons.error,
                   color: AppColors.error,
                 ),
-      title: Text(backupProgressState.isBackingUp
-          ? 'Backing up · ${ref.watch(backupProgressStateProvider).left} today left'
+      title: Text(backupProgressState is BackupInProgress
+          ? 'Backing up · ${(ref.watch(backupProgressStateProvider) as BackupInProgress).left} today left'
           : 'Backup is ${backupOnOffStatus.isOn ? 'on' : 'off'}'),
-      subtitle: backupProgressState.isBackingUp
+      subtitle: backupProgressState is BackupInProgress
           ? null
           : noTodaysNotBackedUp == 0
               ? const Text('Nothing to back up')
               : Text('$noTodaysNotBackedUp todays not backed up'),
       trailing: backupOnOffStatus.isOn &&
-              !backupProgressState.isBackingUp &&
+              backupProgressState is! BackupInProgress &&
               noTodaysNotBackedUp > 0
           ? TextButton(
               onPressed: () => ref.read(todayProvider.notifier).backupTodays(),
-              child: const Text('Backup'),
+
+              // onPressed: _autoRetryBackupIsOn
+              //     ? () {
+              //         context.scaffoldMessenger.showSnackBar(
+              //           appSnackbar(
+              //             text:
+              //                 'Are you sure you want to turn off auto retry backup?',
+              //             action: SnackBarAction(
+              //               label: 'Turn off',
+              //               onPressed: () {
+              //                 setState(() {
+              //                   _autoRetryBackupIsOn = false;
+              //                 });
+              //                 ref.read(todayProvider.notifier).autoRetryBackup =
+              //                     false;
+              //               },
+              //             ),
+              //           ),
+              //         );
+              //       }
+              //     : () {
+              //         if (ref.read(connectionProvider).isConnected) {
+              //           ref.read(todayProvider.notifier).backupTodays();
+              //         } else {
+              //           context.scaffoldMessenger.showSnackBar(
+              //             appSnackbar(
+              //               text:
+              //                   'You\'re currently not connected to the interenet. Backup couldn\'t be started',
+              //               color: AppColors.error,
+              //               action: SnackBarAction(
+              //                 label: 'Enable auto retry',
+              //                 backgroundColor: Colors.white,
+              //                 onPressed: () {
+              //                   setState(() {
+              //                     _autoRetryBackupIsOn = true;
+              //                   });
+              //                   ref
+              //                       .read(todayProvider.notifier)
+              //                       .autoRetryBackup = true;
+              //                 },
+              //               ),
+              //             ),
+              //           );
+              //         }
+              //       },
+              child: Text(_autoRetryBackupIsOn ? 'Auto retry on' : 'Backup'),
             )
           : const SizedBox(),
     );

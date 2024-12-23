@@ -107,10 +107,10 @@ class TodayRepositoryImpl implements TodayRepository {
       _backupProgressController.stream;
 
   @override
-  Future<void> backupTodays(todays, currentUserEmail) async {
+  Future<void> backupTodays(
+      todays, currentUserEmail) async {
     int total = todays.length;
     int completed = 0;
-    _backupProgressController.add(BackupProgress(uploaded: 0, total: total));
 
     for (final today in todays) {
       final storageRef = remoteStorage.ref();
@@ -120,8 +120,18 @@ class TodayRepositoryImpl implements TodayRepository {
       final todayVideoRef = storageRef
           .child(MediaStorageHelper().getVideoStorageRefPath(today.id));
 
-      await todayThumbnailRef.putFile(File(today.localThumbnailPath!));
-      await todayVideoRef.putFile(File(today.localVideoPath!));
+      _backupProgressController.add(BackupInProgress(
+        uploadedCount: completed,
+        total: total,
+        currentlyUploadingToday: today,
+      ));
+      final thumbnailUploadTask =
+          todayThumbnailRef.putFile(File(today.localThumbnailPath!));
+      final videoUploadTask =
+          todayVideoRef.putFile(File(today.localVideoPath!));
+
+      await thumbnailUploadTask;
+      await videoUploadTask;
 
       final remoteThumbnailUrl = await todayThumbnailRef.getDownloadURL();
       final remoteVideoUrl = await todayVideoRef.getDownloadURL();
@@ -145,8 +155,8 @@ class TodayRepositoryImpl implements TodayRepository {
       ));
       completed++;
       _backupProgressController.add(
-        BackupProgress(
-          uploaded: completed,
+        BackupInProgress(
+          uploadedCount: completed,
           total: total,
           justUploadedToday: Today.fromModel(todayModel),
         ),

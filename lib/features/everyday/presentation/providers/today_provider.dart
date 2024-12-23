@@ -4,6 +4,7 @@ import 'package:myapp/core/extensions.dart';
 import 'package:myapp/features/auth/data/repository/auth_repository.dart';
 import 'package:myapp/core/resources/data_state.dart';
 import 'package:myapp/features/everyday/data/repository/today_repository.dart';
+import 'package:myapp/features/everyday/domain/entities/backup_progress.dart';
 import 'package:myapp/features/everyday/domain/entities/today.dart';
 import 'package:myapp/features/everyday/domain/use_cases/add_today.dart';
 import 'package:myapp/features/everyday/domain/use_cases/backup_todays.dart';
@@ -11,7 +12,7 @@ import 'package:myapp/features/everyday/domain/use_cases/delete_today.dart';
 import 'package:myapp/features/everyday/domain/use_cases/get_backup_progress.dart';
 import 'package:myapp/features/everyday/domain/use_cases/read_todays.dart';
 import 'package:myapp/features/everyday/domain/use_cases/update_emails_previous_rows.dart';
-import 'package:myapp/features/everyday/presentation/providers/backup_progress_provider.dart';
+import 'package:myapp/features/everyday/presentation/providers/backup_state_provider.dart';
 import 'package:myapp/service_locator.dart';
 
 class TodayNotifier extends StateNotifier<List<Today>> {
@@ -24,13 +25,36 @@ class TodayNotifier extends StateNotifier<List<Today>> {
     this._backupTodaysUseCase,
     this._backupProgressUseCase,
   ) : super([]) {
-    _backupProgressUseCase().listen((progress) {
-      if (progress.justUploadedToday != null) {
-        final stateWithoutJustUploadedToday = state
-            .where((today) => today != progress.justUploadedToday!)
-            .toList();
-        state = [...stateWithoutJustUploadedToday, progress.justUploadedToday!];
+    ref
+        .read(connectionProvider.notifier)
+        .getConnectionStatusStream()
+        .listen((status) {
+      if (status.isConnected) {
+        if (_autoRetryBackup ||
+            ref.read(backupProgressStateProvider)
+                is BackupPausedDueToNoInternet) {
+          // _autoRetryBackup = false;
+          backupTodays();
+        }
       }
+    });
+
+    _backupProgressUseCase().listen((progress) {
+      if (progress is BackupInProgress) {
+        if (progress.justUploadedToday != null) {
+          final stateWithoutJustUploadedToday = state
+              .where((today) => today != progress.justUploadedToday!)
+              .toList();
+          // here I don't think the order matters, because where all the todays are being used,
+          // they are ordered by date, here we are just adding the updated today
+          // to the state
+          state = [
+            ...stateWithoutJustUploadedToday,
+            progress.justUploadedToday!
+          ];
+        }
+      }
+
       ref
           .read(backupProgressStateProvider.notifier)
           .updateBackupProgress(progress);
@@ -42,12 +66,20 @@ class TodayNotifier extends StateNotifier<List<Today>> {
   final ReadTodaysUseCase _readTodaysUseCase;
   final DeleteTodayUseCase _deleteTodayUseCase;
   final UpdateEmailsPreviousRowsUseCase _updateEmailsPreviousRowsUseCase;
-
   final BackupTodaysUseCase _backupTodaysUseCase;
   final GetBackupProgressUseCase _backupProgressUseCase;
 
+  bool _autoRetryBackup = false;
+
+  set autoRetryBackup(bool b) {
+    _autoRetryBackup = b;
+  }
+
+  bool get isAutoRetryBackupOn => _autoRetryBackup;
+
   List<Today> get unBackedupTodays =>
-      state.where((today) => today.isBackedUp == false).toList();
+      state.where((today) => !today.isBackedUp).toList()
+        ..sort((a, b) => a.date.compareTo(b.date));
 
   Future<DataState> addToday(String videoPath, String caption) async {
     final dataState = await _addTodayUseCase.call(videoPath, caption);

@@ -26,11 +26,9 @@ class UnbackedupScreen extends ConsumerWidget {
             return Stack(
               alignment: Alignment.center,
               children: [
-                Container(
-                  child: today.isAvailableLocal
-                      ? Image.file(File(today.localThumbnailPath!))
-                      : Image.network(today.remoteThumbnailUrl!),
-                ),
+                Hero(
+                    tag: today.id,
+                    child: Image.file(File(today.localThumbnailPath!))),
                 Container(
                   width: double.infinity,
                   color: Colors.black.withOpacity(0.8),

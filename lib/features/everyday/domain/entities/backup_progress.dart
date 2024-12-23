@@ -1,27 +1,33 @@
 import 'package:myapp/features/everyday/domain/entities/today.dart';
 
-class BackupProgress {
-  BackupProgress({
-    this.isBackingUp = true,
-    required this.uploaded,
+abstract class BackupProgress {
+  const BackupProgress();
+}
+
+class BackupInProgress extends BackupProgress {
+  const BackupInProgress({
+    required this.uploadedCount,
     required this.total,
     this.justUploadedToday,
-    // this.currentlyUploadingToday,
+    this.currentlyUploadingToday,
   });
 
-  final bool isBackingUp;
-  final int uploaded;
+  final int uploadedCount;
   final int total;
   final Today? justUploadedToday;
-  // final Today? currentlyUploadingToday;
+  final Today? currentlyUploadingToday;
 
-  BackupProgress.isNotUploading()
-      : isBackingUp = false,
-        uploaded = 0,
-        total = 0,
-        justUploadedToday = null;
+  double get progress => uploadedCount / total;
+  int get left => total - uploadedCount;
+}
 
-  double get progress => uploaded / total;
+class BackupNotInProgress extends BackupProgress {
+  const BackupNotInProgress();
+}
 
-  int get left => total - uploaded;
+class BackupPausedDueToNoInternet extends BackupProgress {
+  const BackupPausedDueToNoInternet({
+    required this.currentlyUploadingToday,
+  });
+  final Today? currentlyUploadingToday;
 }

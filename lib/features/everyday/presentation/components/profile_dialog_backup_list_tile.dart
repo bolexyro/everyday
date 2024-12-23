@@ -6,7 +6,7 @@ import 'package:myapp/features/everyday/domain/entities/backup_progress.dart';
 import 'package:myapp/features/everyday/presentation/components/back_up_bottom_sheet.dart';
 import 'package:myapp/features/everyday/presentation/components/backup_indicator_icon.dart';
 import 'package:myapp/features/everyday/presentation/components/profile_dialog.dart';
-import 'package:myapp/features/everyday/presentation/providers/backup_progress_provider.dart';
+import 'package:myapp/features/everyday/presentation/providers/backup_state_provider.dart';
 import 'package:myapp/features/everyday/presentation/providers/backup_on_off_status_provider.dart';
 import 'package:myapp/features/everyday/presentation/providers/today_provider.dart';
 import 'package:myapp/features/everyday/presentation/screens/backup_settings_screen.dart';
@@ -20,7 +20,8 @@ class ProfileDialogBackupListTile extends ConsumerStatefulWidget {
       _ProfileDialogBackupListTileState();
 }
 
-class _ProfileDialogBackupListTileState extends ConsumerState<ProfileDialogBackupListTile> {
+class _ProfileDialogBackupListTileState
+    extends ConsumerState<ProfileDialogBackupListTile> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -40,20 +41,19 @@ class _ProfileDialogBackupListTileState extends ConsumerState<ProfileDialogBacku
     } else {
       final backupProgressState = ref.watch(backupProgressStateProvider);
 
-      if (backupProgressState.isBackingUp) {
+      if (backupProgressState is BackupInProgress) {
         return ProfileDialogItemBackingUp(
             backupProgressState: backupProgressState);
       }
-      final totalNumberofTodays = ref.read(todayProvider);
-      final numberOfUnbackedupTodays = totalNumberofTodays
-          .where((today) => today.isBackedUp == false)
-          .length;
+      final allTodays = ref.read(todayProvider);
+      final numberOfUnbackedupTodays =
+          allTodays.where((today) => today.isBackedUp == false).length;
       return ProfileDialogItem(
         onTap: () =>
             context.navigator.push(context.route(const BackupSettingsScreen())),
         title: 'Backup is ${backupOnOffStatus.isOn ? 'on' : 'off'}',
         subTitle: backupOnOffStatus.isOn == true
-            ? totalNumberofTodays.isEmpty
+            ? allTodays.isEmpty
                 ? 'Nothing to backup'
                 : numberOfUnbackedupTodays == 0
                     ? 'Your todays are backed up'
@@ -95,11 +95,12 @@ class ProfileDialogItemBackingUp extends StatelessWidget {
       onTap: () =>
           context.navigator.push(context.route(const BackupSettingsScreen())),
       title: 'Backup',
-      subTitle: 'Backing up · ${backupProgressState.left} today left',
+      subTitle:
+          'Backing up · ${(backupProgressState as BackupInProgress).left} today left',
       icon: CircularPercentIndicator(
         radius: 12.0,
         lineWidth: 2.0,
-        percent: backupProgressState.progress,
+        percent: (backupProgressState as BackupInProgress).progress,
         center: const BackupIndicatorIcon(),
         progressColor: AppColors.neonGreen,
       ),
