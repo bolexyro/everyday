@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:myapp/core/extensions.dart';
 import 'package:myapp/features/streaks/presentation/provider/streak_provider.dart';
 
 class StreaksIcon extends ConsumerStatefulWidget {
@@ -18,11 +20,15 @@ class _StreaksIconState extends ConsumerState<StreaksIcon> {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        'mkbhd is da goat ${ref.watch(streakProvider).currentStreakCount.toString()}');
     return Row(
       children: [
-        const Icon(Icons.bolt_outlined),
+        SvgPicture.asset(
+          'bolt'.svg,
+          colorFilter: ColorFilter.mode(
+            Theme.of(context).iconTheme.color!,
+            BlendMode.srcIn,
+          ),
+        ),
         Text(ref.watch(streakProvider).currentStreakCount.toString()),
       ],
     );

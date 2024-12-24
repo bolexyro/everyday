@@ -36,12 +36,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         centerTitle: true,
         actions: [
           const StreaksIcon(),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.offline_pin_outlined,
-            ),
-          ),
+          // IconButton(
+          //   onPressed: () {},
+          //   icon: const Icon(
+          //     Icons.offline_pin_outlined,
+          //   ),
+          // ),
           const Gap(12),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
