@@ -5,25 +5,31 @@ import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart' as path;
 import 'package:uuid/uuid.dart';
 
-class TodayDatabaseSetup {
+class DatabaseSetup {
   static const _databaseName = "TodayDatabase.db";
-  static const _databaseVersion = 5;
+  static const _databaseVersion = 6;
+
   static const todayTable = 'today';
+  static const streakCalendarTable = 'streak_calendar';
 
-  static const columnId = 'id';
-  static const columnCaption = 'caption';
-  static const columnLocalVideoPath = 'localVideoPath';
-  static const columnRemoteVideoUrl = 'remoteVideoUrl';
-  static const columnLocalThumbnailPath = 'localThumbnailPath';
-  static const columnRemoteThumbnailUrl = 'remoteThumbnailUrl';
-  static const columnDate = 'date';
-  static const columnEmail = 'email';
+  static const todayColumnId = 'id';
+  static const todayColumnCaption = 'caption';
+  static const todayColumnLocalVideoPath = 'localVideoPath';
+  static const todayColumnRemoteVideoUrl = 'remoteVideoUrl';
+  static const todayColumnLocalThumbnailPath = 'localThumbnailPath';
+  static const todayColumnRemoteThumbnailUrl = 'remoteThumbnailUrl';
+  static const todayColumnDate = 'date';
+  static const todayColumnEmail = 'email';
 
-  static final TodayDatabaseSetup _instance = TodayDatabaseSetup._internal();
+  static const streakCalendarColumnId = 'id';
+  static const streakCalendarColumnEmail = 'email';
+  static const streakCalendarColumnDate = 'date';
 
-  factory TodayDatabaseSetup() => _instance;
+  static final DatabaseSetup _instance = DatabaseSetup._internal();
 
-  TodayDatabaseSetup._internal();
+  factory DatabaseSetup() => _instance;
+
+  DatabaseSetup._internal();
 
   static sql.Database? _database;
 
@@ -65,6 +71,9 @@ class TodayDatabaseSetup {
         break;
       case 5:
         await _databaseVersion5(db);
+        break;
+      case 6:
+        await _databaseVersion6(db);
         break;
     }
   }
@@ -112,7 +121,7 @@ class TodayDatabaseSetup {
     final List<Map<String, dynamic>> rows = await db.query(todayTable);
 
     for (var row in rows) {
-      final String id = row[columnId];
+      final String id = row[todayColumnId];
       final Uint8List blobData = row['thumbnail'];
 
       final savedFileId = const Uuid().v4();
@@ -154,21 +163,31 @@ class TodayDatabaseSetup {
     final batch = db.batch();
     batch.execute('''
     CREATE TABLE $newTableName (
-      $columnId TEXT PRIMARY KEY,
-      $columnCaption TEXT NOT NULL,
-      $columnLocalVideoPath TEXT,
-      $columnRemoteVideoUrl TEXT,
-      $columnLocalThumbnailPath TEXT,
-      $columnRemoteThumbnailUrl TEXT,
-      $columnDate TEXT NOT NULL,
-      $columnEmail TEXT NOT NULL
+      $todayColumnId TEXT PRIMARY KEY,
+      $todayColumnCaption TEXT NOT NULL,
+      $todayColumnLocalVideoPath TEXT,
+      $todayColumnRemoteVideoUrl TEXT,
+      $todayColumnLocalThumbnailPath TEXT,
+      $todayColumnRemoteThumbnailUrl TEXT,
+      $todayColumnDate TEXT NOT NULL,
+      $todayColumnEmail TEXT NOT NULL
     )
   ''');
     batch.execute('''
-        INSERT INTO $newTableName ($columnId, $columnCaption, $columnLocalVideoPath, $columnDate, $columnLocalThumbnailPath, $columnEmail) 
-        SELECT $columnId, $columnCaption, videoPath, $columnDate, thumbnailPath, $columnEmail FROM $todayTable''');
+        INSERT INTO $newTableName ($todayColumnId, $todayColumnCaption, $todayColumnLocalVideoPath, $todayColumnDate, $todayColumnLocalThumbnailPath, $todayColumnEmail) 
+        SELECT $todayColumnId, $todayColumnCaption, videoPath, $todayColumnDate, thumbnailPath, $todayColumnEmail FROM $todayTable''');
     batch.execute("DROP TABLE $todayTable");
     batch.execute("ALTER TABLE $newTableName RENAME TO $todayTable");
     await batch.commit(noResult: true);
+  }
+
+  Future<void> _databaseVersion6(sql.Database db) async {
+    await db.execute('''
+    CREATE TABLE $streakCalendarTable (
+      $streakCalendarColumnId INTEGER PRIMARY KEY AUTOINCREMENT, 
+      $streakCalendarColumnDate TEXT NOT NULL,
+      $streakCalendarColumnEmail TEXT NOT NULL
+    )
+  ''');
   }
 }

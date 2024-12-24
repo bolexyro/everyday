@@ -8,6 +8,7 @@ import 'package:myapp/core/components/app_scaffold.dart';
 import 'package:myapp/features/everyday/presentation/components/todays_grid_view.dart';
 import 'package:myapp/features/everyday/presentation/components/profile_dialog.dart';
 import 'package:myapp/features/everyday/presentation/components/today_caption_dialog.dart';
+import 'package:myapp/features/streaks/presentation/components/streaks_icon.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -34,6 +35,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: const Text('Everyday'),
         centerTitle: true,
         actions: [
+          const StreaksIcon(),
           IconButton(
             onPressed: () {},
             icon: const Icon(

@@ -9,6 +9,8 @@ import 'package:myapp/core/connection_checker/domain/entities/connection_status.
 import 'package:myapp/features/auth/data/repository/auth_repository.dart';
 import 'package:myapp/features/everyday/data/data_sources/local/today_local_data_source.dart';
 import 'package:myapp/features/everyday/data/repository/today_repository.dart';
+import 'package:myapp/features/streaks/data/data_sources/local_data_source.dart';
+import 'package:myapp/features/streaks/data/repository/streak_repository.dart';
 
 final getIt = GetIt.instance;
 
@@ -32,4 +34,7 @@ Future<void> setupLocator() async {
 
   getIt.registerSingleton<AuthRepositoryImpl>(
       AuthRepositoryImpl(FirebaseAuth.instance));
+
+  getIt.registerSingleton<StreakRepositoryImpl>(
+      StreakRepositoryImpl(StreaksLocalDataSource()));
 }
