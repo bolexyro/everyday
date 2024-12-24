@@ -107,8 +107,7 @@ class TodayRepositoryImpl implements TodayRepository {
       _backupProgressController.stream;
 
   @override
-  Future<void> backupTodays(
-      todays, currentUserEmail) async {
+  Future<void> backupTodays(todays, currentUserEmail) async {
     int total = todays.length;
     int completed = 0;
 
@@ -178,5 +177,24 @@ class TodayRepositoryImpl implements TodayRepository {
   Future<void> downloadTodays() {
     // TODO: implement downloadTodays
     throw UnimplementedError();
+  }
+
+  @override
+  Future<DataState> updateToday(Today today, String currentUserEmail) async {
+    try {
+      await localDataSource.update(TodayModel(
+        id: today.id,
+        caption: today.caption,
+        localVideoPath: today.localVideoPath,
+        remoteVideoUrl: today.remoteVideoUrl,
+        date: today.date,
+        localThumbnailPath: today.localThumbnailPath,
+        remoteThumbnailUrl: today.remoteThumbnailUrl,
+        email: currentUserEmail,
+      ));
+      return const DataSuccess('');
+    } catch (e) {
+      return const DataException('An unknown error occurred');
+    }
   }
 }

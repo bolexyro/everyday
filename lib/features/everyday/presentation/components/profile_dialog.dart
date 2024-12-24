@@ -6,6 +6,7 @@ import 'package:myapp/features/auth/presentation/providers/auth_provider.dart';
 import 'package:myapp/core/extensions.dart';
 import 'package:myapp/features/everyday/presentation/components/profile_dialog_backup_list_tile.dart';
 import 'package:myapp/features/everyday/presentation/providers/today_provider.dart';
+import 'package:myapp/features/partner_share/presentation/components/share_profile_dialog_item.dart';
 
 class ProfileDialog extends ConsumerWidget {
   const ProfileDialog({super.key});
@@ -65,7 +66,8 @@ class ProfileDialog extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         CircleAvatar(
-                          backgroundImage: CachedNetworkImageProvider(user.photoUrl),
+                          backgroundImage:
+                              CachedNetworkImageProvider(user.photoUrl),
                         ),
                         const Gap(12),
                         Expanded(
@@ -100,11 +102,7 @@ class ProfileDialog extends ConsumerWidget {
                   Column(
                     children: [
                       const ProfileDialogBackupListTile(),
-                      ProfileDialogItem(
-                        onTap: () {},
-                        title: 'Share with a partner',
-                        icon: const Icon(Icons.swap_horizontal_circle_outlined),
-                      ),
+                      const ShareProfileDialogItem(),
                       ProfileDialogItem(
                         onTap: () {},
                         title: 'Add another account',

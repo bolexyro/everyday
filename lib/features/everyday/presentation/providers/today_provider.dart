@@ -12,6 +12,7 @@ import 'package:myapp/features/everyday/domain/use_cases/delete_today.dart';
 import 'package:myapp/features/everyday/domain/use_cases/get_backup_progress.dart';
 import 'package:myapp/features/everyday/domain/use_cases/read_todays.dart';
 import 'package:myapp/features/everyday/domain/use_cases/update_emails_previous_rows.dart';
+import 'package:myapp/features/everyday/domain/use_cases/update_today.dart';
 import 'package:myapp/features/everyday/presentation/providers/backup_state_provider.dart';
 import 'package:myapp/service_locator.dart';
 
@@ -24,6 +25,7 @@ class TodayNotifier extends StateNotifier<List<Today>> {
     this._updateEmailsPreviousRowsUseCase,
     this._backupTodaysUseCase,
     this._backupProgressUseCase,
+    this._updateTodayUseCase,
   ) : super([]) {
     ref
         .read(connectionProvider.notifier)
@@ -68,6 +70,7 @@ class TodayNotifier extends StateNotifier<List<Today>> {
   final UpdateEmailsPreviousRowsUseCase _updateEmailsPreviousRowsUseCase;
   final BackupTodaysUseCase _backupTodaysUseCase;
   final GetBackupProgressUseCase _backupProgressUseCase;
+  final UpdateTodayUseCase _updateTodayUseCase;
 
   bool _autoRetryBackup = false;
 
@@ -86,6 +89,17 @@ class TodayNotifier extends StateNotifier<List<Today>> {
     if (dataState is DataSuccess) {
       state = [dataState.data!, ...state];
     }
+    return dataState;
+  }
+
+  Future<DataState> updateToday(Today today) async {
+    final dataState = await _updateTodayUseCase.call(today);
+    final stateWithoutUpdatedToday = state.where((t) => t != today).toList();
+
+    final newState = [...stateWithoutUpdatedToday, today];
+    newState.sort((a, b) => b.date.compareTo(a.date));
+    state = newState;
+
     return dataState;
   }
 
@@ -139,6 +153,10 @@ final todayProvider = StateNotifierProvider<TodayNotifier, List<Today>>(
       getIt<AuthRepositoryImpl>(),
     ),
     GetBackupProgressUseCase(
+      getIt<TodayRepositoryImpl>(),
+    ),
+    UpdateTodayUseCase(
+      getIt<AuthRepositoryImpl>(),
       getIt<TodayRepositoryImpl>(),
     ),
   ),

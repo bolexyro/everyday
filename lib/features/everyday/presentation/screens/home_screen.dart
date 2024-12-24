@@ -63,7 +63,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           final XFile? video =
-              await picker.pickVideo(source: ImageSource.gallery);
+              await picker.pickVideo(source: ImageSource.camera);
           if (video == null) {
             return;
           }
