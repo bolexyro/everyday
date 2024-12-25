@@ -120,24 +120,28 @@ class StreaksLocalDataSource {
           StreakModel(email: currentUserEmail, date: currentDate));
       return 1;
     }
-    final gapInDays = currentDate.difference(lastStreak.date).inDays;
-
+    final gapInDays = _gapInDays(currentDate, lastStreak.date);
     if (gapInDays == 1) {
-      await prefs.setInt(
-          '${currentUserEmail}currentStreakCount', ++savedCurrentStreakCount);
+      await prefs.setInt('${currentUserEmail}currentStreakCount', ++savedCurrentStreakCount);
 
       await _insertStreak(
           StreakModel(email: currentUserEmail, date: currentDate));
       return savedCurrentStreakCount;
     }
-
     if (gapInDays > 1) {
       await prefs.setInt('${currentUserEmail}currentStreakCount', 1);
       await _insertStreak(
           StreakModel(email: currentUserEmail, date: currentDate));
       return 1;
     }
-
     return savedCurrentStreakCount;
+  }
+
+  int _gapInDays(DateTime currentDate, DateTime previousDate) {
+    final normalizedCurrentDate =
+        DateTime(currentDate.year, currentDate.month, currentDate.day);
+    final normalizedPreviousDate =
+        DateTime(previousDate.year, previousDate.month, previousDate.day);
+    return normalizedCurrentDate.difference(normalizedPreviousDate).inDays;
   }
 }
