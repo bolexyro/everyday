@@ -76,10 +76,12 @@ class ProfileDialog extends ConsumerWidget {
                             children: [
                               Text(
                                 user.name,
-                                style: context.textTheme.titleMedium,
+                                style: context.textTheme.bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold),
                               ),
                               Text(
                                 user.email,
+                                style: context.textTheme.bodySmall,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -204,12 +206,13 @@ class ProfileDialogItem extends StatelessWidget {
                           children: [
                             Text(
                               title!,
-                              style: context.textTheme.titleMedium,
+                              style: context.textTheme.bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             if (subTitle != null)
                               Text(
                                 subTitle!,
-                                style: context.textTheme.bodyMedium,
+                                style: context.textTheme.bodySmall,
                               ),
                             if (button != null) button!
                           ],

@@ -98,7 +98,12 @@ class _BackUpBottomSheetState extends ConsumerState<BackUpBottomSheet> {
                 ),
               ),
             ],
-          )
+          ),
+          const Gap(12),
+          Text(
+            'You can change your backup settings at any time',
+            style: context.textTheme.bodySmall,
+          ),
         ],
       ),
     );

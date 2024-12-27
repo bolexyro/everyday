@@ -56,6 +56,12 @@ class _TodayActionsBottomSheetState
                   text: 'Back up',
                   onTap: () {},
                 ),
+              if (!widget.today.isAvailableLocal)
+                TodayAction(
+                  icon: Icons.cloud_download_outlined,
+                  text: 'Download',
+                  onTap: () {},
+                ),
               if (widget.today.isAvailableLocal)
                 TodayAction(
                   icon: Icons.mobile_off_outlined,
@@ -93,18 +99,20 @@ class _TodayActionsBottomSheetState
                     title: Text(_displayCaption),
                     trailing: IconButton(
                       icon: const Icon(Icons.edit),
-                      onPressed: () async {
-                        final result = await showDialog(
-                          context: context,
-                          builder: (context) =>
-                              TodayCaptionDialog(today: widget.today),
-                        );
-                        if (result != null) {
-                          setState(() {
-                            _displayCaption = result;
-                          });
-                        }
-                      },
+                      onPressed: widget.today.isBackedUp
+                          ? null
+                          : () async {
+                              final result = await showDialog(
+                                context: context,
+                                builder: (context) =>
+                                    TodayCaptionDialog(today: widget.today),
+                              );
+                              if (result != null) {
+                                setState(() {
+                                  _displayCaption = result;
+                                });
+                              }
+                            },
                     ),
                   ),
                   ListTile(
