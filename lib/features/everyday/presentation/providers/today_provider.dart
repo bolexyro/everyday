@@ -117,8 +117,8 @@ class TodayNotifier extends StateNotifier<List<Today>> {
     return dataState;
   }
 
-  Future<void> deleteToday(Today today) async {
-    await _deleteTodayUseCase.call(today.id, today.localVideoPath!);
+  Future<void> deleteToday(Today today, [bool onlyLocal = true]) async {
+    await _deleteTodayUseCase.call(today.id, today.localVideoPath!, onlyLocal);
     state = state.where((eachToday) => eachToday != today).toList();
   }
 

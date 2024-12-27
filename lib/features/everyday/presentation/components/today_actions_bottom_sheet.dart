@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:myapp/core/extensions.dart';
 import 'package:myapp/core/resources/data_state.dart';
 import 'package:myapp/features/everyday/domain/entities/today.dart';
+import 'package:myapp/features/everyday/presentation/components/delete_confirmation_dialog.dart';
 import 'package:myapp/features/everyday/presentation/components/today_caption_dialog.dart';
 import 'package:myapp/features/everyday/presentation/providers/today_provider.dart';
 
@@ -43,11 +44,12 @@ class _TodayActionsBottomSheetState
                 text: 'Share',
                 onTap: () {},
               ),
-              TodayAction(
-                icon: Icons.delete_outline,
-                text: 'Permanent Delete',
-                onTap: () {},
-              ),
+              if (widget.today.isBackedUp)
+                TodayAction(
+                  icon: Icons.delete_outline,
+                  text: 'Permanent Delete',
+                  onTap: () {},
+                ),
               if (!widget.today.isBackedUp)
                 TodayAction(
                   icon: Icons.backup_outlined,
@@ -58,7 +60,18 @@ class _TodayActionsBottomSheetState
                 TodayAction(
                   icon: Icons.mobile_off_outlined,
                   text: 'Delete from device',
-                  onTap: () {},
+                  onTap: () async {
+                    final deleteResult = await showDialog(
+                      context: context,
+                      builder: (context) =>
+                          DeleteConfirmationDialog(today: widget.today),
+                    );
+                    if (deleteResult == true) {
+                      if (context.mounted) {
+                        context.navigator.pop();
+                      }
+                    }
+                  },
                 ),
             ],
           ),
@@ -152,7 +165,9 @@ class _TodayActionsBottomSheetState
                     ),
                   ),
                   ListTile(
-                    leading: const Icon(Icons.mobile_friendly),
+                    leading: Icon(widget.today.isAvailableLocal
+                        ? Icons.mobile_friendly
+                        : Icons.mobile_off_outlined),
                     title: !widget.today.isAvailableLocal
                         ? const Text('Not available offline')
                         : FutureBuilder(

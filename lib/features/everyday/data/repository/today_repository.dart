@@ -32,9 +32,10 @@ class TodayRepositoryImpl implements TodayRepository {
   }
 
   @override
-  Future<void> deleteToday(String id, String videoPath) async {
-    throw UnimplementedError();
-    // await localDataSource.delete(id, videoPath);
+  Future<void> deleteToday(String id, String videoPath, bool onlyLocal) async {
+    if (onlyLocal) {
+      await localDataSource.delete(id, videoPath);
+    }
   }
 
   @override

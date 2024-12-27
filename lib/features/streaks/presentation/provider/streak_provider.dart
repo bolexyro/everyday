@@ -11,7 +11,7 @@ class StreakNotifier extends StateNotifier<StreakStateData> {
   StreakNotifier(this._getCurrentStreakCountUseCase)
       : super(
           StreakStateData(
-            currentStreakCount: 1,
+            currentStreakCount: '',
             mostStreakCount: 1,
             streakCalendr: [DateTime.now()],
           ),
@@ -19,7 +19,7 @@ class StreakNotifier extends StateNotifier<StreakStateData> {
 
   Future<void> getCurrentStreakCount() async {
     state = state.copyWith(
-      currentStreakCount: await _getCurrentStreakCountUseCase(),
+      currentStreakCount: (await _getCurrentStreakCountUseCase()).toString(),
     );
   }
 }

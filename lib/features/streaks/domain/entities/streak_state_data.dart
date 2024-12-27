@@ -5,12 +5,12 @@ class StreakStateData {
     required this.streakCalendr,
   });
 
-  final int currentStreakCount;
+  final String currentStreakCount;
   final int mostStreakCount;
   final List<DateTime> streakCalendr;
 
   StreakStateData copyWith({
-    int? currentStreakCount,
+    String? currentStreakCount,
     int? mostStreakCount,
     List<DateTime>? streakCalendr,
   }) {

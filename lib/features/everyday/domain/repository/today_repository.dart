@@ -30,7 +30,7 @@ abstract class TodayRepository {
   Future<void> backupTodays(List<Today> todays, String currentUserEmail);
   Stream<BackupProgress> get backupProgressStream;
 
-  Future<void> deleteToday(String id, String videoPath);
+  Future<void> deleteToday(String id, String videoPath, bool onlyLocal);
   Future<void> updateEmailForPreviousRows(String email);
   Future<void> saveBackupStatus(bool status, String currentUserEmail);
   Future<bool> getBackupStatus(String currentUserEmail);
